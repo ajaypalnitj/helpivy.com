@@ -26,3 +26,23 @@ body {
     justify-content: center;
     backdrop-filter: blur(4px);
 } 
+/* Game cards */
+.game-card {
+    text-decoration: none;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.game-card:hover {
+    transform: translateY(-6px) rotate(-1deg);
+    box-shadow: 0 20px 40px rgba(124, 58, 237, 0.18);
+}
+.game-card:active {
+    transform: scale(0.97);
+}
+.play {
+    display: inline-block;
+    padding: 0.5rem 1.5rem;
+    border-radius: 9999px;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(to right, #9333ea, #db2777);
+}

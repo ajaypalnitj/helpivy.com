@@ -1,0 +1,11 @@
+{
+  "name": "helpivy-home",
+  "compatibility_date": "2026-11-01",
+  // helpivy.com's home page, served by Cloudflare (it used to be GitHub Pages).
+  "routes": [
+    { "pattern": "helpivy.com", "custom_domain": true },
+    { "pattern": "www.helpivy.com", "custom_domain": true }
+  ],
+  "workers_dev": true,
+  "assets": { "directory": "." }
+}

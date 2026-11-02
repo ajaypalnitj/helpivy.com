@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <radialGradient id="bg" cx="50%" cy="40%" r="70%">
+      <stop offset="0" stop-color="#ffd23f"/>
+      <stop offset="1" stop-color="#ff5d73"/>
+    </radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M256 70 L292 170 L392 120 L346 214 L446 250 L346 288 L392 384 L292 336 L256 440 L220 336 L120 384 L166 288 L66 250 L166 214 L120 120 L220 170 Z" fill="#fff" stroke="#2b2244" stroke-width="16" stroke-linejoin="round"/>
+  <text x="256" y="290" font-family="Arial Rounded MT Bold, Arial, sans-serif" font-size="96" font-weight="900" text-anchor="middle" fill="#ff5d73" stroke="#2b2244" stroke-width="10" paint-order="stroke">BONK</text>
+</svg>
