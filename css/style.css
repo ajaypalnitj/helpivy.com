@@ -46,3 +46,36 @@ body {
     color: #fff;
     background: linear-gradient(to right, #9333ea, #db2777);
 }
+
+/* Policy and support pages */
+.doc h2 {
+    font-size: 1.35rem;
+    font-weight: 600;
+    color: #1f2937;
+    margin: 2rem 0 0.6rem;
+}
+.doc h3 {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #374151;
+    margin: 1.25rem 0 0.4rem;
+}
+.doc p, .doc li {
+    color: #4b5563;
+    line-height: 1.7;
+}
+.doc p { margin: 0.5rem 0; }
+.doc ul { list-style: disc; padding-left: 1.4rem; margin: 0.5rem 0; }
+.doc li { margin: 0.25rem 0; }
+.doc a { color: #9333ea; text-decoration: underline; text-underline-offset: 2px; }
+.doc a:hover { color: #db2777; }
+.doc table { width: 100%; border-collapse: collapse; margin: 0.75rem 0; font-size: 0.95rem; }
+.doc th, .doc td { text-align: left; vertical-align: top; padding: 0.55rem 0.7rem; border-bottom: 1px solid #ede9fe; color: #4b5563; }
+.doc th { color: #6b21a8; font-weight: 600; background: #faf5ff; }
+.summary-box {
+    background: linear-gradient(to right, #f3e8ff, #fce7f3);
+    border-radius: 1.25rem;
+    padding: 1.1rem 1.4rem;
+}
+.site-footer a { color: #7e22ce; }
+.site-footer a:hover { color: #db2777; text-decoration: underline; }
