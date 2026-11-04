@@ -31,10 +31,11 @@
 </nav>
 <div class="sparkle" aria-hidden="true"></div>
 <main class="dw-main max-w-4xl mx-auto px-4 pt-8">
-<header class="text-center">
+<span class="lantern" style="left:6%;animation-duration:19s;animation-delay:0s;transform:scale(1)"></span><span class="lantern" style="left:18%;animation-duration:23s;animation-delay:6s;transform:scale(0.7)"></span><span class="lantern" style="left:33%;animation-duration:21s;animation-delay:11s;transform:scale(0.9)"></span><span class="lantern" style="left:52%;animation-duration:25s;animation-delay:3s;transform:scale(0.6)"></span><span class="lantern" style="left:67%;animation-duration:20s;animation-delay:8s;transform:scale(1.1)"></span><span class="lantern" style="left:81%;animation-duration:24s;animation-delay:1s;transform:scale(0.8)"></span><span class="lantern" style="left:92%;animation-duration:22s;animation-delay:13s;transform:scale(0.7)"></span><header class="text-center">
     <div class="text-6xl">🪔</div>
     <h1 class="dw-title text-5xl sm:text-6xl mt-2">Diwali fun</h1>
     <p class="dw-muted text-lg mt-3 max-w-xl mx-auto">Free festive activities for kids. Nothing to install, no sign-up, nothing collected.</p>
+    <p class="dw-tap-hint mt-3">✨ Tap anywhere for fireworks</p>
     <p class="text-yellow-200 mt-2" style="font-family:'Baloo 2'">शुभ दीपावली · <span style="font-family:'Baloo Paaji 2'">ਦੀਵਾਲੀ ਅਤੇ ਬੰਦੀ ਛੋੜ ਦਿਵਸ ਦੀਆਂ ਵਧਾਈਆਂ</span></p>
 </header>
 <div class="grid gap-5 sm:grid-cols-2 mt-10"><a href="/diwali/card/" class="dw-card"><div class="text-4xl">💌</div><h2 class="text-2xl mt-2">Diwali card maker</h2><p class="dw-muted mt-1">Make a greeting card in Hindi, Punjabi or English and share it on WhatsApp.</p></a><a href="/diwali/diyas/" class="dw-card"><div class="text-4xl">🪔</div><h2 class="text-2xl mt-2">Light the diyas</h2><p class="dw-muted mt-1">Tap each diya to light it and hear a festival word in Hindi or Punjabi.</p></a><a href="/diwali/rangoli/" class="dw-card"><div class="text-4xl">🌸</div><h2 class="text-2xl mt-2">Rangoli maker</h2><p class="dw-muted mt-1">Draw with magic symmetry and save your rangoli as a picture.</p></a><a href="/diwali/colouring/" class="dw-card"><div class="text-4xl">🖍️</div><h2 class="text-2xl mt-2">Colouring pages</h2><p class="dw-muted mt-1">Print diya, rangoli and sweets pages with Hindi and Punjabi words.</p></a></div>
@@ -47,11 +48,18 @@
     </div>
 </section>
 </main>
+<script src="/diwali/fx.js"></script>
+<script>
+
+document.addEventListener('pointerdown', e => { if (e.target.closest('a,button')) return; FX.burst(e.clientX, e.clientY); });
+setTimeout(() => FX.show(4), 600);
+
+</script>
 <footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
     <div class="flex justify-center gap-6 mb-5 text-xl">
         <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://twitter.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.instagram.com/helpivy_" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
     </div>
     <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
     <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>

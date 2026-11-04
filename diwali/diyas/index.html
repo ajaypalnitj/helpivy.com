@@ -44,7 +44,7 @@
         <button class="dw-chip" data-l="pa" style="font-family:'Baloo Paaji 2'">ਪੰਜਾਬੀ</button>
     </div>
 </header>
-<section class="dw-card mt-8 text-center">
+<section class="dw-card mt-8 text-center scene" id="scene">
     <p class="text-sm dw-muted" id="step"></p>
     <div class="text-5xl mt-2" id="emoji"></div>
     <div id="row" class="flex flex-wrap justify-center gap-3 sm:gap-5 mt-6"></div>
@@ -73,7 +73,17 @@
 @keyframes pulse { 0%,100% { transform: scale(1) } 50% { transform: scale(1.08) } }
 @media (prefers-reduced-motion: reduce) { .diya-btn.lit .flame, .diya-btn.next svg { animation: none } }
 </style>
+<style>
+.scene { transition: background 1s, box-shadow 1s; background: rgba(255,255,255,calc(.05 + var(--glow, 0) * .12)); box-shadow: 0 0 calc(var(--glow, 0) * 90px) rgba(250,204,21,calc(var(--glow, 0) * .55)); }
+.dw-body { transition: background 1.2s; }
+.diya-btn.lit svg { filter: drop-shadow(0 0 14px rgba(250,204,21,.9)); }
+.word-pop { animation: pop .5s cubic-bezier(.2,1.6,.4,1); }
+@keyframes pop { from { transform: scale(.3); opacity: 0 } to { transform: scale(1); opacity: 1 } }
+#sentence.glow { text-shadow: 0 0 18px rgba(250,204,21,.9); color: #fef9c3; }
+.stars-earned { font-size: 1.6rem; letter-spacing: .2rem; }
+</style>
 </main>
+<script src="/diwali/fx.js"></script>
 <script>
 
 const DIYA = `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse class="glow" cx="50" cy="40" rx="40" ry="34" fill="url(#gl)"/><path class="flame" d="M50 8 C62 26 60 40 50 44 C40 40 38 26 50 8Z" fill="url(#fl)"/><path d="M12 56 Q50 98 88 56 Q92 52 94 48 L6 48 Q8 52 12 56Z" fill="url(#bw)"/><circle cx="34" cy="60" r="2.5" fill="#fde68a"/><circle cx="50" cy="64" r="2.5" fill="#fde68a"/><circle cx="66" cy="60" r="2.5" fill="#fde68a"/></svg>`;
@@ -98,18 +108,18 @@ function render() {
   const words = s.g.split(' '), roman = s.r.split(' ');
   $('step').textContent = `Sentence ${idx + 1} of ${L.s.length}`;
   $('emoji').textContent = s.emoji;
-  $('done').hidden = true; $('finish').hidden = true; $('row').hidden = false;
+  $('done').hidden = true; $('finish').hidden = true; $('row').hidden = false; $('sentence').classList.remove('glow'); document.getElementById('scene').style.setProperty('--glow', 0);
   $('row').innerHTML = s.w.map((c, i) => `<button class="diya-btn${i === 0 ? ' next' : ''}" data-i="${i}" aria-label="Diya ${i + 1}">${DIYA}<span class="w" style="font-family:${L.font}"></span><span class="r"></span></button>`).join('');
   $('row').querySelectorAll('.diya-btn').forEach((b, i) => b.addEventListener('click', () => {
     if (i !== lit) return;
-    b.classList.add('lit'); b.classList.remove('next');
+    b.classList.add('lit'); b.classList.remove('next'); const rc = b.getBoundingClientRect(); FX.sparkle(rc.left + rc.width / 2, rc.top + rc.height * .3); FX.chime(i); b.querySelector('.w').classList.add('word-pop');
     b.querySelector('.w').textContent = words[i]; b.querySelector('.r').textContent = roman[i];
-    say(s.w[i]); lit++;
+    setTimeout(() => say(s.w[i]), 250); lit++; document.getElementById('scene').style.setProperty('--glow', lit / s.w.length);
     const nb = $('row').querySelectorAll('.diya-btn')[lit];
     if (nb) nb.classList.add('next');
     else setTimeout(() => {
       $('sentence').textContent = s.g; $('sentence').style.fontFamily = L.font;
-      $('roman').textContent = s.r; $('english').textContent = s.e; $('done').hidden = false; say(s.clip);
+      $('roman').textContent = s.r; $('english').textContent = s.e; $('done').hidden = false; $('sentence').classList.add('glow'); say(s.clip); FX.show(3);
     }, 900);
   }));
 }
@@ -117,7 +127,7 @@ $('again').onclick = () => say(DATA[lang].s[idx].clip);
 $('next').onclick = () => {
   const L = DATA[lang];
   if (idx + 1 < L.s.length) { idx++; render(); return; }
-  $('row').hidden = true; $('done').hidden = true; $('finish').hidden = false;
+  $('row').hidden = true; $('done').hidden = true; $('finish').hidden = false; FX.show(9); setTimeout(() => FX.show(6), 2500);
   $('finishText').textContent = `Want more words like these? ${L.appName} teaches children to read ${lang === 'hi' ? 'Hindi' : 'Punjabi'}, one sound at a time.`;
   $('appLink').href = L.app; $('appLink').textContent = `Try ${L.appName}`;
 };
@@ -133,8 +143,8 @@ render();
 <footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
     <div class="flex justify-center gap-6 mb-5 text-xl">
         <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://twitter.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.instagram.com/helpivy_" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
     </div>
     <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
     <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>

@@ -19,3 +19,9 @@ a.dw-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(250,
 .sparkle { position: fixed; inset: 0; pointer-events: none; background-image: radial-gradient(2px 2px at 20% 30%, #fde68a, transparent), radial-gradient(1.5px 1.5px at 70% 20%, #fff, transparent), radial-gradient(2px 2px at 85% 60%, #fbcfe8, transparent), radial-gradient(1.5px 1.5px at 35% 80%, #fde68a, transparent), radial-gradient(1px 1px at 55% 45%, #fff, transparent); opacity: .7; z-index: 0; }
 .dw-main { position: relative; z-index: 1; }
 @media print { .no-print { display: none !important; } }
+.dw-mute { position: fixed; right: 14px; bottom: 14px; z-index: 60; width: 46px; height: 46px; border-radius: 50%; font-size: 20px; background: rgba(15,10,42,.8); border: 1px solid rgba(250,204,21,.4); cursor: pointer; }
+.dw-tap-hint { color: #fde68a; font-size: .9rem; opacity: .8; }
+/* lanterns drifting up behind the hub */
+.lantern { position: fixed; bottom: -60px; width: 26px; height: 34px; border-radius: 40% 40% 30% 30%; background: radial-gradient(circle at 50% 60%, #fff7ae, #fb923c 60%, #c2410c); box-shadow: 0 0 22px 6px rgba(251,146,60,.45); opacity: .85; animation: rise linear infinite; z-index: 0; pointer-events: none; }
+@keyframes rise { from { transform: translateY(0) translateX(0); } 50% { transform: translateY(-55vh) translateX(18px); } to { transform: translateY(-115vh) translateX(-10px); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) { .lantern { display: none; } }

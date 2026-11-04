@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rangoli maker — Diwali | Helpivy</title>
-    <meta name="description" content="Draw a rangoli with magic symmetry and save it as a picture. A free Diwali activity for kids.">
+    <meta name="description" content="Draw a glowing rangoli with magic symmetry, or let it draw one for you. A free Diwali activity for kids.">
     <link rel="canonical" href="https://helpivy.com/diwali/rangoli/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://helpivy.com/diwali/rangoli/">
     <meta property="og:title" content="Rangoli maker — Diwali | Helpivy">
-    <meta property="og:description" content="Draw a rangoli with magic symmetry and save it as a picture. A free Diwali activity for kids.">
+    <meta property="og:description" content="Draw a glowing rangoli with magic symmetry, or let it draw one for you. A free Diwali activity for kids.">
     <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/svg+xml" href="/brand/logo.svg">
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
@@ -33,16 +33,20 @@
 <main class="dw-main max-w-4xl mx-auto px-4 pt-8">
 <header class="text-center">
     <h1 class="dw-title text-4xl sm:text-5xl">Rangoli maker 🌸</h1>
-    <p class="dw-muted mt-2">Draw anywhere on the circle. Everything you draw is copied all around, like a real rangoli.</p>
+    <p class="dw-muted mt-2">Draw anywhere on the circle and watch it bloom all around. Or tap ✨ Magic and let it draw one for you.</p>
 </header>
-<div class="grid gap-6 md:grid-cols-[1fr_260px] mt-8 items-start">
+<div class="grid gap-6 md:grid-cols-[1fr_280px] mt-8 items-start">
     <canvas id="rg" width="1000" height="1000" class="w-full rounded-3xl shadow-2xl touch-none" aria-label="Rangoli drawing area"></canvas>
     <div class="dw-card space-y-4">
+        <button id="magic" class="dw-btn w-full justify-center text-lg">✨ Magic rangoli</button>
+        <div><span class="font-semibold">Brush</span><div class="flex flex-wrap gap-2 mt-2" id="modes">
+            <button class="dw-chip" data-m="paint">🖌️ Paint</button><button class="dw-chip is-on" data-m="glow">💡 Glow</button>
+            <button class="dw-chip" data-m="rainbow">🌈 Rainbow</button><button class="dw-chip" data-m="dots">⚪ Dots</button><button class="dw-chip" data-m="petals">🌸 Petals</button></div></div>
         <div><span class="font-semibold">Colour</span><div class="flex flex-wrap gap-2 mt-2" id="cols"></div></div>
-        <div><span class="font-semibold">Brush</span><div class="flex gap-2 mt-2" id="sizes">
+        <div><span class="font-semibold">Size</span><div class="flex gap-2 mt-2" id="sizes">
             <button class="dw-chip" data-s="6">Thin</button><button class="dw-chip is-on" data-s="14">Medium</button><button class="dw-chip" data-s="28">Thick</button></div></div>
         <div><span class="font-semibold">Petals</span><div class="flex gap-2 mt-2" id="syms">
-            <button class="dw-chip" data-n="6">6</button><button class="dw-chip is-on" data-n="8">8</button><button class="dw-chip" data-n="12">12</button></div></div>
+            <button class="dw-chip" data-n="6">6</button><button class="dw-chip is-on" data-n="8">8</button><button class="dw-chip" data-n="12">12</button><button class="dw-chip" data-n="16">16</button></div></div>
         <div class="flex flex-wrap gap-2 pt-2">
             <button id="undo" class="dw-btn dw-btn-alt">↩️ Undo</button>
             <button id="clear" class="dw-btn dw-btn-alt">🧽 Clear</button>
@@ -51,41 +55,88 @@
     </div>
 </div>
 </main>
+<script src="/diwali/fx.js"></script>
 <script>
 
 const cv = document.getElementById('rg'), ctx = cv.getContext('2d');
 const COLS = ['#fde047', '#fb923c', '#f43f5e', '#ec4899', '#a855f7', '#22d3ee', '#4ade80', '#ffffff'];
-let col = COLS[0], size = 14, n = 8, strokes = [], cur = null;
+let col = COLS[0], size = 14, n = 8, mode = 'glow', strokes = [], cur = null, lastSpark = 0;
 const C = 500;
 document.getElementById('cols').innerHTML = COLS.map((c, i) => `<button aria-label="colour ${i + 1}" data-c="${c}" style="background:${c};width:34px;height:34px;border-radius:50%;border:3px solid ${i ? 'transparent' : '#fff'}"></button>`).join('');
 function base() {
-  const g = ctx.createRadialGradient(C, C, 50, C, C, 520); g.addColorStop(0, '#7c2d12'); g.addColorStop(1, '#431407');
+  const g = ctx.createRadialGradient(C, C, 50, C, C, 560); g.addColorStop(0, '#7c2d12'); g.addColorStop(1, '#2a0a04');
   ctx.fillStyle = g; ctx.fillRect(0, 0, 1000, 1000);
-  ctx.strokeStyle = 'rgba(253,230,138,.25)'; ctx.lineWidth = 2;
+  ctx.strokeStyle = 'rgba(253,230,138,.18)'; ctx.lineWidth = 2;
   for (const r of [120, 240, 360, 470]) { ctx.beginPath(); ctx.arc(C, C, r, 0, 2 * Math.PI); ctx.stroke(); }
 }
-function line(s, a, b) {
-  for (let k = 0; k < s.n; k++) for (const m of [1, -1]) {
-    ctx.save(); ctx.translate(C, C); ctx.rotate(k * 2 * Math.PI / s.n); ctx.scale(1, m);
-    ctx.strokeStyle = s.col; ctx.lineWidth = s.size; ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-    ctx.beginPath(); ctx.moveTo(a[0] - C, a[1] - C); ctx.lineTo(b[0] - C, b[1] - C); ctx.stroke(); ctx.restore();
+// Draw one segment of a stroke, copied n times around the centre and mirrored.
+function seg(s, a, b, k) {
+  const dx = b[0] - a[0], dy = b[1] - a[1], d = Math.hypot(dx, dy);
+  let colr = s.col;
+  if (s.mode === 'rainbow') colr = `hsl(${(s.h0 + k * 3) % 360} 95% 62%)`;
+  const stamps = [];
+  if (s.mode === 'dots' || s.mode === 'petals') {
+    const gap = s.size * (s.mode === 'dots' ? 1.9 : 2.2);
+    s.acc = (s.acc || 0) + d;
+    while (s.acc >= gap) { s.acc -= gap; const t = 1 - s.acc / Math.max(d, .001); stamps.push([a[0] + dx * t, a[1] + dy * t, Math.atan2(dy, dx)]); }
+    if (!stamps.length) return;
+  }
+  for (let j = 0; j < s.n; j++) for (const m of [1, -1]) {
+    ctx.save(); ctx.translate(C, C); ctx.rotate(j * 2 * Math.PI / s.n); ctx.scale(1, m); ctx.translate(-C, -C);
+    ctx.strokeStyle = ctx.fillStyle = colr; ctx.lineWidth = s.size; ctx.lineCap = ctx.lineJoin = 'round';
+    if (s.mode === 'glow') { ctx.shadowColor = colr; ctx.shadowBlur = s.size * 1.6; }
+    if (s.mode === 'dots') for (const [x, y] of stamps) { ctx.beginPath(); ctx.arc(x, y, s.size * .55, 0, 7); ctx.fill(); }
+    else if (s.mode === 'petals') for (const [x, y, ang] of stamps) { ctx.beginPath(); ctx.ellipse(x, y, s.size * 1.1, s.size * .45, ang, 0, 7); ctx.fill(); }
+    else { ctx.beginPath(); ctx.moveTo(a[0], a[1]); ctx.lineTo(b[0], b[1]); ctx.stroke(); }
+    ctx.restore();
   }
 }
-function redraw() { base(); for (const s of strokes) for (let i = 1; i < s.pts.length; i++) line(s, s.pts[i - 1], s.pts[i]); }
+function replay(s) { s.acc = 0; for (let i = 1; i < s.pts.length; i++) seg(s, s.pts[i - 1], s.pts[i], i); }
+function redraw() { base(); for (const s of strokes) replay(s); }
+function newStroke(p, o = {}) { return Object.assign({col, size, n, mode, h0: Math.random() * 360, pts: [p], acc: 0}, o); }
 function pos(e) { const r = cv.getBoundingClientRect(); return [(e.clientX - r.left) * 1000 / r.width, (e.clientY - r.top) * 1000 / r.height]; }
-cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); const p = pos(e); cur = {col, size, n, pts: [p, [p[0] + .1, p[1]]]}; strokes.push(cur); line(cur, p, cur.pts[1]); });
-cv.addEventListener('pointermove', e => { if (!cur) return; const p = pos(e), last = cur.pts[cur.pts.length - 1]; cur.pts.push(p); line(cur, last, p); });
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); const p = pos(e); cur = newStroke(p); cur.pts.push([p[0] + .5, p[1]]); strokes.push(cur); seg(cur, p, cur.pts[1], 1); FX.chime(Math.floor(Math.random() * 8), .05); });
+cv.addEventListener('pointermove', e => {
+  if (!cur) return; const p = pos(e), last = cur.pts[cur.pts.length - 1]; cur.pts.push(p); seg(cur, last, p, cur.pts.length);
+  const now = performance.now(); if (now - lastSpark > 90) { lastSpark = now; FX.sparkle(e.clientX, e.clientY, 4); }
+});
 const up = () => { cur = null; };
 cv.addEventListener('pointerup', up); cv.addEventListener('pointercancel', up);
 function pick(id, attr, fn) { document.getElementById(id).addEventListener('click', e => { const b = e.target.closest(`[${attr}]`); if (!b) return; fn(b); document.querySelectorAll(`#${id} [${attr}]`).forEach(x => x.classList.toggle('is-on', x === b)); }); }
 document.getElementById('cols').addEventListener('click', e => { const b = e.target.closest('[data-c]'); if (!b) return; col = b.dataset.c; document.querySelectorAll('#cols button').forEach(x => x.style.borderColor = x === b ? '#fff' : 'transparent'); });
+pick('modes', 'data-m', b => mode = b.dataset.m);
 pick('sizes', 'data-s', b => size = +b.dataset.s);
 pick('syms', 'data-n', b => n = +b.dataset.n);
 document.getElementById('undo').onclick = () => { strokes.pop(); redraw(); };
 document.getElementById('clear').onclick = () => { strokes = []; redraw(); };
+
+// ✨ Magic: build a rangoli from layered shapes and draw it in, one layer at a time.
+let magicBusy = false;
+document.getElementById('magic').onclick = () => {
+  if (magicBusy) return; magicBusy = true; strokes = []; redraw();
+  const nn = [8, 12, 16][Math.floor(Math.random() * 3)], modes = ['glow', 'petals', 'dots', 'rainbow', 'glow', 'petals'];
+  const layers = [];
+  for (let L = 0; L < 6; L++) {
+    const r = 70 + L * 72, sector = 2 * Math.PI / nn, kind = L % 3, pts = [];
+    for (let i = 0; i <= 24; i++) {
+      const t = i / 24, a = t * sector;
+      const rr = kind === 0 ? r : kind === 1 ? r + Math.sin(t * Math.PI) * 45 : r + (i % 2 ? 22 : -22);
+      pts.push([C + Math.cos(a) * rr, C + Math.sin(a) * rr]);
+    }
+    layers.push(newStroke(pts[0], {pts: [pts[0]], all: pts, n: nn, mode: modes[L], col: COLS[(L * 3 + Math.floor(Math.random() * 3)) % 7], size: [10, 14, 9, 12, 16, 11][L]}));
+  }
+  let L = 0, i = 1;
+  (function step() {
+    const s = layers[L];
+    if (i === 1) strokes.push(s);
+    const a = s.pts[s.pts.length - 1], b = s.all[i]; s.pts.push(b); seg(s, a, b, i); i++;
+    if (i >= s.all.length) { FX.chime(L + 2, .08); L++; i = 1; }
+    if (L < layers.length) setTimeout(step, 28); else { magicBusy = false; const r = cv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height / 2); FX.show(3); }
+  })();
+};
 document.getElementById('save').onclick = () => {
   ctx.fillStyle = 'rgba(255,255,255,.75)'; ctx.font = "600 26px 'Poppins', sans-serif"; ctx.textAlign = 'center'; ctx.fillText('helpivy.com/diwali', C, 975);
-  cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'my-rangoli.png'; a.click(); redraw(); });
+  cv.toBlob(b => { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'my-rangoli.png'; a.click(); redraw(); FX.show(4); });
 };
 redraw();
 
@@ -93,8 +144,8 @@ redraw();
 <footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
     <div class="flex justify-center gap-6 mb-5 text-xl">
         <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://twitter.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.instagram.com/helpivy_" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
     </div>
     <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
     <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>

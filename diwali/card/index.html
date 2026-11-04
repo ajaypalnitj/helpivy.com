@@ -4,12 +4,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Diwali card maker — Helpivy</title>
-    <meta name="description" content="Make a free Diwali or Bandi Chhor Divas greeting card in Hindi, Punjabi or English and share it on WhatsApp.">
+    <meta name="description" content="Make a free animated Diwali or Bandi Chhor Divas greeting card in Hindi, Punjabi or English and share it on WhatsApp.">
     <link rel="canonical" href="https://helpivy.com/diwali/card/">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://helpivy.com/diwali/card/">
     <meta property="og:title" content="Diwali card maker — Helpivy">
-    <meta property="og:description" content="Make a free Diwali or Bandi Chhor Divas greeting card in Hindi, Punjabi or English and share it on WhatsApp.">
+    <meta property="og:description" content="Make a free animated Diwali or Bandi Chhor Divas greeting card in Hindi, Punjabi or English and share it on WhatsApp.">
     <meta name="twitter:card" content="summary">
     <link rel="icon" type="image/svg+xml" href="/brand/logo.svg">
     <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
@@ -33,10 +33,10 @@
 <main class="dw-main max-w-4xl mx-auto px-4 pt-8">
 <header class="text-center no-print">
     <h1 class="dw-title text-4xl sm:text-5xl">Diwali card maker 💌</h1>
-    <p class="dw-muted mt-2">Pick a greeting, add your name, then share it. Your card is made on your device; nothing is sent to us.</p>
+    <p class="dw-muted mt-2">Pick a greeting and decorations, add your name, then share. Tap the card for fireworks! It is made on your device; nothing is sent to us.</p>
 </header>
-<div class="grid gap-6 md:grid-cols-[1fr_320px] mt-8 items-start">
-    <canvas id="card" width="1080" height="1080" class="w-full rounded-3xl shadow-2xl" aria-label="Your Diwali card"></canvas>
+<div class="grid gap-6 md:grid-cols-[1fr_330px] mt-8 items-start">
+    <canvas id="card" width="1080" height="1080" class="w-full rounded-3xl shadow-2xl cursor-pointer" aria-label="Your Diwali card"></canvas>
     <div class="dw-card space-y-4">
         <label class="block"><span class="font-semibold">Greeting</span>
             <select id="greet" class="dw-select mt-1">
@@ -51,6 +51,14 @@
                 <button class="dw-chip is-on" data-t="night">Night</button>
                 <button class="dw-chip" data-t="marigold">Marigold</button>
                 <button class="dw-chip" data-t="rose">Rose</button>
+                <button class="dw-chip" data-t="peacock">Peacock</button>
+            </div></div>
+        <div><span class="font-semibold">Decorations</span>
+            <div class="flex flex-wrap gap-2 mt-1" id="decos">
+                <button class="dw-chip is-on" data-d="garland">🌼 Garland</button>
+                <button class="dw-chip is-on" data-d="lanterns">🏮 Lanterns</button>
+                <button class="dw-chip is-on" data-d="fireworks">🎆 Fireworks</button>
+                <button class="dw-chip" data-d="rangoli">🌸 Rangoli</button>
             </div></div>
         <label class="block"><span class="font-semibold">From</span>
             <input id="from" class="dw-input mt-1" maxlength="30" placeholder="Your name (optional)" autocomplete="off"></label>
@@ -58,13 +66,15 @@
             <button id="share" class="dw-btn">📤 Share</button>
             <button id="save" class="dw-btn dw-btn-alt">⬇️ Save</button>
         </div>
-        <p class="text-xs dw-muted">Sharing opens your phone's share sheet (WhatsApp and others). On a computer, Save downloads the picture.</p>
+        <p class="text-xs dw-muted">Share opens your phone's share sheet (WhatsApp and others). On a computer, Save downloads the picture.</p>
     </div>
 </div>
 </main>
+<script src="/diwali/fx.js"></script>
 <script>
 
 const cv = document.getElementById('card'), ctx = cv.getContext('2d');
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const G = {
   hi: {big: 'शुभ दीपावली', small: 'Happy Diwali', font: "'Baloo 2'"},
   pa: {big: 'ਦੀਵਾਲੀ ਦੀਆਂ ਵਧਾਈਆਂ', small: 'Happy Diwali', font: "'Baloo Paaji 2'"},
@@ -73,93 +83,125 @@ const G = {
   en: {big: 'Happy Diwali', small: 'Festival of lights', font: "'Baloo 2'"},
 };
 const T = {
-  night: ['#1e1b4b', '#581c87', '#fde047', '#fbcfe8'],
-  marigold: ['#c2410c', '#f59e0b', '#fff7ed', '#fde68a'],
-  rose: ['#831843', '#db2777', '#fef3c7', '#fde68a'],
+  night: ['#0f0a2a', '#4c1d95', '#fef9c3', '#fde68a'],
+  marigold: ['#7c2d12', '#ea580c', '#fff7ed', '#fde68a'],
+  rose: ['#500724', '#be185d', '#fef3c7', '#fde68a'],
+  peacock: ['#042f2e', '#0e7490', '#ecfeff', '#fde68a'],
 };
 let theme = 'night';
+const deco = new Set(['garland', 'lanterns', 'fireworks']);
+const stars = Array.from({length: 90}, (_, i) => [(i * 157.3) % 1080, (i * 263.7) % 560, (i % 3) + 1, i * 0.7]);
+let falling = Array.from({length: 26}, () => [Math.random() * 1080, Math.random() * 1080, .6 + Math.random() * 1.2]);
 
 function petals(cx, cy, r, n, col, a0 = 0) {
   ctx.fillStyle = col;
-  for (let i = 0; i < n; i++) {
-    const a = a0 + i * 2 * Math.PI / n;
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(a);
-    ctx.beginPath(); ctx.ellipse(r, 0, r * 0.45, r * 0.18, 0, 0, 2 * Math.PI); ctx.fill();
-    ctx.restore();
-  }
+  for (let i = 0; i < n; i++) { ctx.save(); ctx.translate(cx, cy); ctx.rotate(a0 + i * 2 * Math.PI / n); ctx.beginPath(); ctx.ellipse(r, 0, r * .45, r * .18, 0, 0, 7); ctx.fill(); ctx.restore(); }
 }
-function rangoli(cx, cy, s, cols) {
-  ctx.globalAlpha = 0.9;
-  petals(cx, cy, s, 12, cols[0]); petals(cx, cy, s * 0.62, 8, cols[1], Math.PI / 8);
-  ctx.beginPath(); ctx.arc(cx, cy, s * 0.22, 0, 2 * Math.PI); ctx.fillStyle = cols[2]; ctx.fill();
+function rangoli(cx, cy, s, cols, spin = 0) {
+  ctx.globalAlpha = .92; petals(cx, cy, s, 12, cols[0], spin); petals(cx, cy, s * .62, 8, cols[1], Math.PI / 8 - spin);
+  ctx.beginPath(); ctx.arc(cx, cy, s * .22, 0, 7); ctx.fillStyle = cols[2]; ctx.fill();
+  ctx.fillStyle = '#fff'; for (let i = 0; i < 12; i++) { const a = i * Math.PI / 6 + spin; ctx.beginPath(); ctx.arc(cx + Math.cos(a) * s * 1.18, cy + Math.sin(a) * s * 1.18, s * .035, 0, 7); ctx.fill(); }
   ctx.globalAlpha = 1;
 }
-function diya(x, y, s) {
-  // glow
-  const g = ctx.createRadialGradient(x, y - s * 0.55, 0, x, y - s * 0.55, s * 1.3);
-  g.addColorStop(0, 'rgba(253,224,71,.55)'); g.addColorStop(1, 'rgba(253,224,71,0)');
-  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y - s * 0.55, s * 1.3, 0, 2 * Math.PI); ctx.fill();
-  // flame
-  ctx.beginPath(); ctx.moveTo(x, y - s * 1.05);
-  ctx.bezierCurveTo(x + s * 0.28, y - s * 0.6, x + s * 0.2, y - s * 0.3, x, y - s * 0.28);
-  ctx.bezierCurveTo(x - s * 0.2, y - s * 0.3, x - s * 0.28, y - s * 0.6, x, y - s * 1.05);
-  const fg = ctx.createLinearGradient(x, y - s, x, y - s * 0.28); fg.addColorStop(0, '#fef08a'); fg.addColorStop(1, '#f97316');
-  ctx.fillStyle = fg; ctx.fill();
-  // bowl
-  ctx.beginPath(); ctx.moveTo(x - s, y - s * 0.2);
-  ctx.quadraticCurveTo(x, y + s * 0.75, x + s, y - s * 0.2);
-  ctx.quadraticCurveTo(x + s * 1.15, y - s * 0.3, x + s * 1.2, y - s * 0.45);
-  ctx.lineTo(x - s * 1.2, y - s * 0.45);
-  ctx.quadraticCurveTo(x - s * 1.15, y - s * 0.3, x - s, y - s * 0.2);
-  const bg = ctx.createLinearGradient(x, y - s * 0.45, x, y + s * 0.5); bg.addColorStop(0, '#f59e0b'); bg.addColorStop(1, '#b45309');
+function diya(x, y, s, t) {
+  const fl = calm ? 1 : 1 + Math.sin(t * 9 + x) * .06 + Math.sin(t * 23 + y) * .03;
+  const g = ctx.createRadialGradient(x, y - s * .55, 0, x, y - s * .55, s * 1.5 * fl);
+  g.addColorStop(0, 'rgba(253,224,71,.6)'); g.addColorStop(1, 'rgba(253,224,71,0)');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.arc(x, y - s * .55, s * 1.5 * fl, 0, 7); ctx.fill();
+  ctx.save(); ctx.translate(x, y - s * .28); ctx.scale(1 / fl, fl); ctx.translate(-x, -(y - s * .28));
+  ctx.beginPath(); ctx.moveTo(x, y - s * 1.08);
+  ctx.bezierCurveTo(x + s * .3, y - s * .6, x + s * .2, y - s * .3, x, y - s * .28);
+  ctx.bezierCurveTo(x - s * .2, y - s * .3, x - s * .3, y - s * .6, x, y - s * 1.08);
+  const fg = ctx.createLinearGradient(x, y - s, x, y - s * .28); fg.addColorStop(0, '#fffbeb'); fg.addColorStop(.4, '#fde047'); fg.addColorStop(1, '#f97316');
+  ctx.fillStyle = fg; ctx.fill(); ctx.restore();
+  ctx.beginPath(); ctx.moveTo(x - s, y - s * .2); ctx.quadraticCurveTo(x, y + s * .75, x + s, y - s * .2);
+  ctx.quadraticCurveTo(x + s * 1.15, y - s * .3, x + s * 1.2, y - s * .45); ctx.lineTo(x - s * 1.2, y - s * .45);
+  ctx.quadraticCurveTo(x - s * 1.15, y - s * .3, x - s, y - s * .2);
+  const bg = ctx.createLinearGradient(x, y - s * .45, x, y + s * .5); bg.addColorStop(0, '#fbbf24'); bg.addColorStop(1, '#b45309');
   ctx.fillStyle = bg; ctx.fill();
-  ctx.fillStyle = '#fde68a';
-  for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.arc(x + i * s * 0.25, y - s * 0.05 + Math.abs(i) * -0.02 * s, s * 0.05, 0, 2 * Math.PI); ctx.fill(); }
+  ctx.fillStyle = '#fef3c7'; for (let i = -3; i <= 3; i++) { ctx.beginPath(); ctx.arc(x + i * s * .25, y - s * .05, s * .05, 0, 7); ctx.fill(); }
+  ctx.strokeStyle = '#7c2d12'; ctx.lineWidth = s * .03; ctx.beginPath(); ctx.moveTo(x - s * .7, y + s * .12); ctx.quadraticCurveTo(x, y + s * .42, x + s * .7, y + s * .12); ctx.stroke();
 }
-function fit(text, font, max, size) {
-  do { ctx.font = `700 ${size}px ${font}`; size -= 4; } while (ctx.measureText(text).width > max && size > 30);
+function garland(t) {
+  const cols = ['#f97316', '#facc15', '#f97316', '#fb923c'];
+  for (let i = 0; i <= 26; i++) {
+    const x = i * 1080 / 26, y = 30 + Math.sin(i / 26 * Math.PI) * 70;
+    ctx.fillStyle = '#15803d'; ctx.beginPath(); ctx.ellipse(x + 10, y + 8, 14, 6, .6, 0, 7); ctx.fill();
+    ctx.fillStyle = cols[i % 4]; ctx.beginPath(); ctx.arc(x, y, 19, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.35)'; ctx.beginPath(); ctx.arc(x - 6, y - 6, 6, 0, 7); ctx.fill();
+    if (i % 4 === 2) { ctx.strokeStyle = '#facc15'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(x, y + 18); ctx.lineTo(x, y + 80); ctx.stroke(); ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.arc(x, y + 92, 13, 0, 7); ctx.fill(); }
+  }
 }
-function draw() {
+function lantern(x, len, t, col) {
+  const sw = calm ? 0 : Math.sin(t * 1.6 + x) * .06;
+  ctx.save(); ctx.translate(x, 0); ctx.rotate(sw);
+  ctx.strokeStyle = 'rgba(253,230,138,.7)'; ctx.lineWidth = 3; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(0, len); ctx.stroke();
+  const y = len + 70, gl = ctx.createRadialGradient(0, y, 0, 0, y, 140); gl.addColorStop(0, col + 'aa'); gl.addColorStop(1, col + '00');
+  ctx.fillStyle = gl; ctx.beginPath(); ctx.arc(0, y, 140, 0, 7); ctx.fill();
+  ctx.fillStyle = col; ctx.beginPath(); ctx.moveTo(0, len); ctx.lineTo(55, y); ctx.lineTo(0, y + 75); ctx.lineTo(-55, y); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#fde68a'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = '#fff7ae'; ctx.beginPath(); ctx.moveTo(0, len + 22); ctx.lineTo(28, y); ctx.lineTo(0, y + 45); ctx.lineTo(-28, y); ctx.closePath(); ctx.fill();
+  ctx.strokeStyle = '#facc15'; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.moveTo(i * 8, y + 75); ctx.lineTo(i * 10, y + 125); ctx.stroke(); }
+  ctx.restore();
+}
+function burstArt(x, y, r, col, t, k) {
+  const ph = calm ? 1 : (Math.sin(t * 1.3 + k) + 1) / 2 * .5 + .5;
+  ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.globalAlpha = .85;
+  for (let i = 0; i < 18; i++) { const a = i * Math.PI / 9; ctx.beginPath(); ctx.moveTo(x + Math.cos(a) * r * .25 * ph, y + Math.sin(a) * r * .25 * ph); ctx.lineTo(x + Math.cos(a) * r * ph, y + Math.sin(a) * r * ph); ctx.stroke();
+    ctx.fillStyle = col; ctx.beginPath(); ctx.arc(x + Math.cos(a) * r * 1.12 * ph, y + Math.sin(a) * r * 1.12 * ph, 4, 0, 7); ctx.fill(); }
+  ctx.globalAlpha = 1;
+}
+function fit(text, font, max, size) { do { ctx.font = `700 ${size}px ${font}`; size -= 4; } while (ctx.measureText(text).width > max && size > 30); }
+function draw(t = 0, still = false) {
   const [c1, c2, ink, acc] = T[theme], g = G[document.getElementById('greet').value];
-  const bg = ctx.createLinearGradient(0, 0, 1080, 1080); bg.addColorStop(0, c1); bg.addColorStop(1, c2);
+  const bg = ctx.createRadialGradient(540, 360, 80, 540, 540, 900); bg.addColorStop(0, c2); bg.addColorStop(1, c1);
   ctx.fillStyle = bg; ctx.fillRect(0, 0, 1080, 1080);
-  ctx.fillStyle = 'rgba(255,255,255,.7)';
-  for (let i = 0; i < 70; i++) { const x = (i * 157) % 1080, y = (i * 263) % 520; ctx.beginPath(); ctx.arc(x, y, (i % 3) + 1, 0, 2 * Math.PI); ctx.fill(); }
-  rangoli(0, 1080, 220, ['#f472b6', '#facc15', '#22d3ee']); rangoli(1080, 1080, 220, ['#facc15', '#a78bfa', '#f472b6']);
-  rangoli(0, 0, 150, ['#fb923c', '#f472b6', '#fde047']); rangoli(1080, 0, 150, ['#22d3ee', '#fb923c', '#fde047']);
-  diya(540, 420, 150); diya(330, 470, 70); diya(750, 470, 70);
-  ctx.textAlign = 'center'; ctx.fillStyle = ink;
-  ctx.shadowColor = 'rgba(250,204,21,.6)'; ctx.shadowBlur = 24;
-  fit(g.big, g.font, 940, 120); ctx.fillText(g.big, 540, 680);
-  ctx.shadowBlur = 0; ctx.fillStyle = acc; ctx.font = `500 46px 'Baloo 2'`; ctx.fillText(g.small, 540, 750);
+  for (const [x, y, r, k] of stars) { ctx.globalAlpha = still ? .8 : .4 + .6 * Math.abs(Math.sin(t * 1.5 + k)); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(x, y, r, 0, 7); ctx.fill(); }
+  ctx.globalAlpha = 1;
+  if (deco.has('fireworks')) { burstArt(200, 250, 110, '#f472b6', t, 0); burstArt(880, 230, 130, '#fde047', t, 2); burstArt(560, 140, 80, '#22d3ee', t, 4); }
+  if (deco.has('rangoli')) { rangoli(0, 1080, 230, ['#f472b6', '#facc15', '#22d3ee'], t * .15); rangoli(1080, 1080, 230, ['#facc15', '#a78bfa', '#f472b6'], -t * .15); }
+  if (deco.has('lanterns')) { lantern(110, 150, t, '#ef4444'); lantern(970, 200, t + 1, '#f59e0b'); }
+  // row of diyas on a ledge
+  ctx.fillStyle = 'rgba(0,0,0,.25)'; ctx.fillRect(0, 575, 1080, 14);
+  diya(540, 520, 135, t); diya(310, 560, 70, t + .3); diya(770, 560, 70, t + .6); diya(130, 575, 45, t + .9); diya(950, 575, 45, t + 1.2);
+  if (deco.has('garland')) garland(t);
+  ctx.textAlign = 'center'; ctx.fillStyle = ink; ctx.shadowColor = 'rgba(250,204,21,.8)'; ctx.shadowBlur = 30;
+  fit(g.big, g.font, 960, 124); ctx.fillText(g.big, 540, 750);
+  ctx.shadowBlur = 0; ctx.fillStyle = acc; ctx.font = `600 48px 'Baloo 2'`; ctx.fillText(g.small, 540, 820);
   const name = document.getElementById('from').value.trim();
-  if (name) { ctx.fillStyle = ink; ctx.font = `500 44px 'Baloo 2', 'Baloo Paaji 2'`; ctx.fillText('— ' + name, 540, 840); }
-  ctx.fillStyle = 'rgba(255,255,255,.8)'; ctx.font = `600 30px 'Poppins', sans-serif`; ctx.fillText('helpivy.com/diwali', 540, 1040);
+  if (name) { ctx.fillStyle = ink; ctx.font = `500 46px 'Baloo 2', 'Baloo Paaji 2'`; ctx.fillText('— ' + name, 540, 900); }
+  ctx.fillStyle = 'rgba(255,255,255,.85)'; ctx.font = `600 30px 'Poppins', sans-serif`; ctx.fillText('helpivy.com/diwali', 540, 1045);
+  if (!still && !calm) { ctx.fillStyle = '#fde68a'; for (const p of falling) { p[1] += p[2] * 1.4; if (p[1] > 1080) { p[1] = -10; p[0] = Math.random() * 1080; } ctx.globalAlpha = .7; ctx.beginPath(); ctx.arc(p[0], p[1], p[2] * 2, 0, 7); ctx.fill(); } ctx.globalAlpha = 1; }
 }
-document.getElementById('themes').addEventListener('click', e => {
-  const b = e.target.closest('[data-t]'); if (!b) return;
-  theme = b.dataset.t; document.querySelectorAll('#themes .dw-chip').forEach(x => x.classList.toggle('is-on', x === b)); draw();
-});
-document.getElementById('greet').addEventListener('change', draw);
-document.getElementById('from').addEventListener('input', draw);
-const blob = () => new Promise(r => cv.toBlob(r, 'image/png'));
+let t0 = performance.now(), frozen = false;
+(function loop(now) { if (!frozen) draw((now - t0) / 1000); requestAnimationFrame(loop); })(t0);
+function chips(id, attr, fn, multi) {
+  document.getElementById(id).addEventListener('click', e => {
+    const b = e.target.closest(`[${attr}]`); if (!b) return;
+    if (multi) b.classList.toggle('is-on'); else document.querySelectorAll(`#${id} [${attr}]`).forEach(x => x.classList.toggle('is-on', x === b));
+    fn(b); FX.chime(Math.floor(Math.random() * 6), .06);
+  });
+}
+chips('themes', 'data-t', b => theme = b.dataset.t);
+chips('decos', 'data-d', b => deco.has(b.dataset.d) ? deco.delete(b.dataset.d) : deco.add(b.dataset.d), true);
+cv.addEventListener('pointerdown', e => FX.burst(e.clientX, e.clientY));
+async function still() { frozen = true; draw(.4, true); const b = await new Promise(r => cv.toBlob(r, 'image/png')); frozen = false; return b; }
 function download(b) { const a = document.createElement('a'); a.href = URL.createObjectURL(b); a.download = 'diwali-card.png'; a.click(); setTimeout(() => URL.revokeObjectURL(a.href), 2000); }
-document.getElementById('save').addEventListener('click', async () => download(await blob()));
+document.getElementById('save').addEventListener('click', async () => { download(await still()); FX.show(5); });
 document.getElementById('share').addEventListener('click', async () => {
-  const b = await blob(), f = new File([b], 'diwali-card.png', {type: 'image/png'});
-  if (navigator.canShare && navigator.canShare({files: [f]})) {
-    try { await navigator.share({files: [f], text: 'Happy Diwali! Make your own card at helpivy.com/diwali'}); } catch (e) { /* cancelled */ }
-  } else download(b);
+  const b = await still(), f = new File([b], 'diwali-card.png', {type: 'image/png'});
+  FX.show(5);
+  if (navigator.canShare && navigator.canShare({files: [f]})) { try { await navigator.share({files: [f], text: 'Happy Diwali! 🪔 Make your own card at helpivy.com/diwali'}); } catch (e) { /* cancelled */ } }
+  else download(b);
 });
-Promise.all(["700 80px 'Baloo 2'", "500 40px 'Baloo 2'", "700 80px 'Baloo Paaji 2'"].map(f => document.fonts.load(f, 'शुभ ਦੀਵਾਲੀ Happy'))).finally(draw);
-draw();
+Promise.all(["700 80px 'Baloo 2'", "600 40px 'Baloo 2'", "700 80px 'Baloo Paaji 2'"].map(f => document.fonts.load(f, 'शुभ ਦੀਵਾਲੀ Happy'))).catch(() => {});
 
 </script>
 <footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
     <div class="flex justify-center gap-6 mb-5 text-xl">
         <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
-        <a href="https://www.instagram.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
-        <a href="https://twitter.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+        <a href="https://www.instagram.com/helpivy_" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
     </div>
     <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
     <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>
