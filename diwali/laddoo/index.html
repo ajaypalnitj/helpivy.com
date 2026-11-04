@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laddoo Catch — Diwali game | Helpivy</title>
+    <meta name="description" content="A free Diwali game for kids: catch laddoos, jalebis and barfi to light up the town, and learn the sweets' names in Hindi and Punjabi.">
+    <link rel="canonical" href="https://helpivy.com/diwali/laddoo/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://helpivy.com/diwali/laddoo/">
+    <meta property="og:title" content="Laddoo Catch — Diwali game | Helpivy">
+    <meta property="og:description" content="A free Diwali game for kids: catch laddoos, jalebis and barfi to light up the town, and learn the sweets' names in Hindi and Punjabi.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/brand/logo.svg">
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/season.css">
+    <script src="/js/season.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Baloo+Paaji+2:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/diwali/diwali.css">
+</head>
+<body class="dw-body">
+<nav class="topnav">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+        <a href="/" class="flex items-center gap-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600"><img src="/brand/logo.svg" alt="Helpivy" class="w-9 h-9"><span class="hidden sm:inline">Helpivy</span></a>
+        <div class="flex items-center gap-0 sm:gap-3 text-sm sm:text-base">
+            <a href="/games/" class="nav-link">Games</a><a href="/painti/" class="nav-link">Painti</a><a href="/bolo/" class="nav-link">Bolo</a><a href="/support.html" class="nav-link">Support</a>
+        </div>
+    </div>
+</nav>
+<div class="sparkle" aria-hidden="true"></div>
+<main class="dw-main max-w-4xl mx-auto px-4 pt-8">
+<header class="text-center">
+    <h1 class="dw-title text-4xl sm:text-5xl">Laddoo Catch 🍬</h1>
+    <p class="dw-muted mt-2">Slide the thali to catch the Diwali sweets. Every 3 sweets light a house. Watch out for the grumpy rain cloud!</p>
+    <div class="flex justify-center gap-2 mt-3" id="langs">
+        <button class="dw-chip is-on" data-l="hi" style="font-family:'Baloo 2'">हिंदी</button>
+        <button class="dw-chip" data-l="pa" style="font-family:'Baloo Paaji 2'">ਪੰਜਾਬੀ</button>
+        <button class="dw-chip" data-l="en">English</button>
+    </div>
+</header>
+<div class="relative mt-5 mx-auto" style="max-width:560px">
+    <style>body.playing .season-toggle, body.playing .dw-mute { display: none; }</style>
+    <canvas id="game" class="w-full rounded-3xl shadow-2xl touch-none block" style="aspect-ratio:3/4;background:#0b0720" aria-label="Laddoo Catch game: drag to move the plate"></canvas>
+    <div id="overlay" class="absolute inset-0 flex flex-col items-center justify-center text-center rounded-3xl" style="background:rgba(11,7,32,.72)">
+        <p class="dw-title text-4xl" id="ovTitle">Ready?</p>
+        <p class="dw-muted mt-2 px-6" id="ovText">Drag left and right (or use the arrow keys) to move your thali.</p>
+        <button id="play" class="dw-btn text-xl mt-5">▶ Play</button>
+    </div>
+</div>
+</main>
+<script src="/diwali/fx.js"></script>
+<script>
+
+const cv = document.getElementById('game'), ctx = cv.getContext('2d');
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const NAMES = {
+  laddoo: {hi: 'लड्डू', pa: 'ਲੱਡੂ', en: 'Laddoo'},
+  jalebi: {hi: 'जलेबी', pa: 'ਜਲੇਬੀ', en: 'Jalebi'},
+  barfi: {hi: 'बर्फ़ी', pa: 'ਬਰਫ਼ੀ', en: 'Barfi'},
+  jamun: {hi: 'गुलाब जामुन', pa: 'ਗੁਲਾਬ ਜਾਮਣ', en: 'Gulab jamun'},
+  diya: {hi: 'दीया', pa: 'ਦੀਵਾ', en: 'Diya'},
+};
+const FONT = {hi: "'Baloo 2'", pa: "'Baloo Paaji 2'", en: "'Baloo 2'"};
+let lang = 'hi', W = 600, H = 800, scale = 1;
+let state = 'ready', plate, items, pops, houses, caught, streak, t, nextDrop, cloud, best = 0;
+const HOUSES = 10, PER = 3;
+try { best = +localStorage.getItem('dw-laddoo-best') || 0; } catch (e) { /* storage blocked */ }
+
+function size() {
+  const r = cv.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, 2);
+  cv.width = r.width * dpr; cv.height = r.height * dpr; scale = cv.width / W; ctx.setTransform(scale, 0, 0, scale, 0, 0);
+}
+addEventListener('resize', size);
+function reset() {
+  plate = {x: W / 2, w: 130};
+  items = []; pops = []; caught = 0; streak = 0; t = 0; nextDrop = 30;
+  houses = Array.from({length: HOUSES}, (_, i) => ({x: 30 + i * 58, h: 70 + ((i * 37) % 60), lit: false, glow: 0}));
+  cloud = {x: -120, active: false, timer: 600};
+}
+reset();
+
+// --- drawing the sweets (all simple shapes, no images) ---
+function drawSweet(k, x, y, s, rot) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  if (k === 'laddoo') {
+    const g = ctx.createRadialGradient(-s * .3, -s * .3, s * .1, 0, 0, s); g.addColorStop(0, '#fde68a'); g.addColorStop(1, '#f59e0b');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, 0, s, 0, 7); ctx.fill();
+    ctx.fillStyle = '#b45309'; for (let i = 0; i < 9; i++) { const a = i * 2.3, r = s * (.3 + (i % 3) * .2); ctx.beginPath(); ctx.arc(Math.cos(a) * r, Math.sin(a) * r, s * .08, 0, 7); ctx.fill(); }
+  } else if (k === 'jalebi') {
+    ctx.strokeStyle = '#f97316'; ctx.lineWidth = s * .28; ctx.lineCap = 'round'; ctx.beginPath();
+    for (let a = 0; a < 14; a += .2) { const r = s * .08 * a; ctx.lineTo(Math.cos(a) * r, Math.sin(a) * r); } ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,.35)'; ctx.lineWidth = s * .07; ctx.stroke();
+  } else if (k === 'barfi') {
+    ctx.fillStyle = '#fef3c7'; ctx.beginPath(); ctx.moveTo(0, -s); ctx.lineTo(s * .8, 0); ctx.lineTo(0, s); ctx.lineTo(-s * .8, 0); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = '#e5e7eb'; ctx.globalAlpha = .9; ctx.beginPath(); ctx.moveTo(0, -s * .7); ctx.lineTo(s * .55, 0); ctx.lineTo(0, s * .7); ctx.lineTo(-s * .55, 0); ctx.closePath(); ctx.fill(); ctx.globalAlpha = 1;
+    ctx.fillStyle = '#22c55e'; ctx.beginPath(); ctx.arc(0, 0, s * .12, 0, 7); ctx.fill();
+  } else if (k === 'jamun') {
+    const g = ctx.createRadialGradient(-s * .3, -s * .3, s * .1, 0, 0, s); g.addColorStop(0, '#a16207'); g.addColorStop(1, '#451a03');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(0, 0, s, s * .85, 0, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.45)'; ctx.beginPath(); ctx.ellipse(-s * .35, -s * .35, s * .22, s * .12, -.6, 0, 7); ctx.fill();
+  } else if (k === 'diya') {
+    const g = ctx.createRadialGradient(0, -s * .5, 0, 0, -s * .5, s * 1.6); g.addColorStop(0, 'rgba(253,224,71,.8)'); g.addColorStop(1, 'rgba(253,224,71,0)');
+    ctx.fillStyle = g; ctx.beginPath(); ctx.arc(0, -s * .5, s * 1.6, 0, 7); ctx.fill();
+    ctx.fillStyle = '#fde047'; ctx.beginPath(); ctx.moveTo(0, -s * 1.2); ctx.quadraticCurveTo(s * .35, -s * .5, 0, -s * .25); ctx.quadraticCurveTo(-s * .35, -s * .5, 0, -s * 1.2); ctx.fill();
+    ctx.fillStyle = '#f59e0b'; ctx.beginPath(); ctx.moveTo(-s, -s * .2); ctx.quadraticCurveTo(0, s * .8, s, -s * .2); ctx.closePath(); ctx.fill();
+  } else if (k === 'drop') {
+    ctx.fillStyle = '#7dd3fc'; ctx.beginPath(); ctx.moveTo(0, -s); ctx.quadraticCurveTo(s * .9, s * .2, 0, s * .8); ctx.quadraticCurveTo(-s * .9, s * .2, 0, -s); ctx.fill();
+    ctx.fillStyle = 'rgba(255,255,255,.6)'; ctx.beginPath(); ctx.arc(-s * .25, s * .1, s * .15, 0, 7); ctx.fill();
+  }
+  ctx.restore();
+}
+function drawPlate() {
+  const {x, w} = plate, y = H - 70;
+  ctx.fillStyle = 'rgba(0,0,0,.35)'; ctx.beginPath(); ctx.ellipse(x, y + 22, w * .55, 10, 0, 0, 7); ctx.fill();
+  const g = ctx.createLinearGradient(x - w / 2, y, x + w / 2, y); g.addColorStop(0, '#b45309'); g.addColorStop(.5, '#fde68a'); g.addColorStop(1, '#b45309');
+  ctx.fillStyle = g; ctx.beginPath(); ctx.ellipse(x, y, w / 2, 18, 0, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#92400e'; ctx.lineWidth = 3; ctx.stroke();
+  ctx.fillStyle = '#ef4444'; for (let i = -2; i <= 2; i++) { ctx.beginPath(); ctx.arc(x + i * w * .18, y, 3.5, 0, 7); ctx.fill(); }
+}
+function drawTown() {
+  for (const h of houses) {
+    const top = H - 150 - h.h;
+    ctx.fillStyle = h.lit ? '#2e1065' : '#1e1b2e'; ctx.fillRect(h.x, top, 50, h.h);
+    ctx.fillStyle = h.lit ? '#4c1d95' : '#27233a'; ctx.beginPath(); ctx.moveTo(h.x - 6, top); ctx.lineTo(h.x + 25, top - 26); ctx.lineTo(h.x + 56, top); ctx.closePath(); ctx.fill();
+    ctx.fillStyle = h.lit ? 'rgba(253,224,71,.85)' : 'rgba(255,255,255,.08)'; ctx.fillRect(h.x + 9, top + 18, 12, 14); ctx.fillRect(h.x + 29, top + 18, 12, 14);
+    if (h.lit) {
+      h.glow = Math.min(1, h.glow + .03);
+      const fl = calm ? 1 : 1 + Math.sin(t * .3 + h.x) * .12;
+      const g = ctx.createRadialGradient(h.x + 25, top - 34, 0, h.x + 25, top - 34, 34 * fl); g.addColorStop(0, `rgba(253,224,71,${.7 * h.glow})`); g.addColorStop(1, 'rgba(253,224,71,0)');
+      ctx.fillStyle = g; ctx.beginPath(); ctx.arc(h.x + 25, top - 34, 34 * fl, 0, 7); ctx.fill();
+      drawSweet('diya', h.x + 25, top - 30, 9, 0);
+    } else { ctx.fillStyle = 'rgba(255,255,255,.15)'; ctx.beginPath(); ctx.arc(h.x + 25, top - 32, 4, 0, 7); ctx.fill(); }
+  }
+  ctx.fillStyle = '#120a24'; ctx.fillRect(0, H - 150, W, 150);
+}
+function drawCloud() {
+  if (!cloud.active) return;
+  const x = cloud.x, y = 90;
+  ctx.fillStyle = '#64748b';
+  for (const [dx, dy, r] of [[-40, 8, 28], [-10, -8, 36], [26, 4, 30], [50, 12, 22]]) { ctx.beginPath(); ctx.arc(x + dx, y + dy, r, 0, 7); ctx.fill(); }
+  ctx.fillStyle = '#0f172a'; ctx.beginPath(); ctx.arc(x - 14, y + 4, 3.5, 0, 7); ctx.arc(x + 14, y + 4, 3.5, 0, 7); ctx.fill();
+  ctx.strokeStyle = '#0f172a'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(x, y + 22, 9, 1.15 * Math.PI, 1.85 * Math.PI); ctx.stroke();
+  ctx.beginPath(); ctx.moveTo(x - 22, y - 6); ctx.lineTo(x - 8, y - 1); ctx.moveTo(x + 22, y - 6); ctx.lineTo(x + 8, y - 1); ctx.stroke();
+}
+function pop(text, x, y, col = '#fde047', big = false) { pops.push({text, x: Math.max(110, Math.min(W - 110, x)), y, col, life: 70, big}); }
+function litCount() { return houses.filter(h => h.lit).length; }
+function lightNext() {
+  const h = houses.find(h => !h.lit); if (!h) return;
+  h.lit = true; h.glow = 0;
+  const r = cv.getBoundingClientRect(); FX.sparkle(r.left + (h.x + 25) * r.width / W, r.top + (H - 190 - h.h) * r.height / H, 16);
+  FX.chime(litCount() % 8, .1);
+  if (litCount() === HOUSES) win();
+}
+function dim() {
+  const lit = houses.filter(h => h.lit); if (!lit.length) return;
+  lit[lit.length - 1].lit = false; FX.chime(0, .05);
+}
+function spawn() {
+  const level = litCount() / HOUSES;
+  const r = Math.random();
+  let k = r < .3 ? 'laddoo' : r < .52 ? 'jalebi' : r < .72 ? 'barfi' : r < .9 ? 'jamun' : 'diya';
+  if (cloud.active && Math.random() < .5) k = 'drop';
+  const x = k === 'drop' ? cloud.x + (Math.random() - .5) * 60 : 40 + Math.random() * (W - 80);
+  items.push({k, x, y: k === 'drop' ? 120 : -30, vy: 2.2 + level * 2.2 + Math.random() * .8, rot: Math.random() * 6, vr: (Math.random() - .5) * .08, s: k === 'jamun' ? 20 : 22});
+}
+function update() {
+  t++;
+  if (state !== 'play') return;
+  if (--nextDrop <= 0) { spawn(); nextDrop = Math.max(22, 48 - litCount() * 2.5); }
+  if (--cloud.timer <= 0 && !cloud.active && litCount() >= 2) { cloud.active = true; cloud.x = -80; cloud.dir = 1.4; }
+  if (cloud.active) { cloud.x += cloud.dir; if (cloud.x > W + 90) { cloud.active = false; cloud.timer = 500 + Math.random() * 400; } }
+  for (const it of items) {
+    it.y += it.vy; it.rot += it.vr;
+    const py = H - 70;
+    if (!it.done && it.y > py - 22 && it.y < py + 14 && Math.abs(it.x - plate.x) < plate.w / 2 + 6) {
+      it.done = true;
+      if (it.k === 'drop') { streak = 0; pop('💧 Oops!', it.x, py - 40, '#7dd3fc'); dim(); continue; }
+      const n = NAMES[it.k][lang];
+      streak++; caught++;
+      pop(n, it.x, py - 46, '#fde047', true);
+      FX.chime(2 + (caught % 5), .07);
+      if (it.k === 'diya') { lightNext(); lightNext(); pop('✨ +2', it.x, py - 86, '#fef08a'); }
+      else if (caught % PER === 0) lightNext();
+      if (streak > 0 && streak % 8 === 0) { pop(`🔥 ${streak} in a row!`, W / 2, 220, '#fb923c', true); const r = cv.getBoundingClientRect(); FX.burst(r.left + r.width / 2, r.top + r.height * .3); }
+    }
+    if (it.y > H + 40) it.done = true;
+  }
+  items = items.filter(it => !it.done);
+  for (const p of pops) { p.y -= .8; p.life--; }
+  pops = pops.filter(p => p.life > 0);
+}
+function render() {
+  const sky = ctx.createLinearGradient(0, 0, 0, H); const lit = litCount() / HOUSES;
+  sky.addColorStop(0, `rgb(${11 + lit * 30},${7 + lit * 10},${32 + lit * 40})`); sky.addColorStop(1, `rgb(${40 + lit * 60},${16 + lit * 10},${60 + lit * 30})`);
+  ctx.fillStyle = sky; ctx.fillRect(0, 0, W, H);
+  ctx.fillStyle = 'rgba(255,255,255,.7)';
+  for (let i = 0; i < 40; i++) { const x = (i * 149) % W, y = (i * 83) % 330; ctx.globalAlpha = .3 + .7 * Math.abs(Math.sin(t * .02 + i)); ctx.fillRect(x, y, 2, 2); }
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = '#fef9c3'; ctx.beginPath(); ctx.arc(W - 70, 70, 26, 0, 7); ctx.fill(); ctx.fillStyle = sky; ctx.beginPath(); ctx.arc(W - 60, 62, 24, 0, 7); ctx.fill();
+  drawTown(); drawCloud();
+  for (const it of items) drawSweet(it.k, it.x, it.y, it.s, it.k === 'drop' || it.k === 'diya' ? 0 : it.rot);
+  drawPlate();
+  // score
+  ctx.fillStyle = 'rgba(15,10,42,.6)'; ctx.beginPath(); ctx.roundRect(14, 14, 220, 44, 22); ctx.fill();
+  ctx.fillStyle = '#fde047'; ctx.font = "700 24px 'Baloo 2'"; ctx.textAlign = 'left';
+  ctx.fillText(`🪔 ${litCount()}/${HOUSES}   🍬 ${caught}`, 30, 45);
+  ctx.textAlign = 'center';
+  for (const p of pops) { ctx.globalAlpha = Math.min(1, p.life / 30); ctx.fillStyle = p.col; ctx.font = `700 ${p.big ? 34 : 26}px ${FONT[lang]}`; ctx.shadowColor = 'rgba(0,0,0,.6)'; ctx.shadowBlur = 6; ctx.fillText(p.text, p.x, p.y); ctx.shadowBlur = 0; }
+  ctx.globalAlpha = 1;
+}
+function loop() { update(); render(); requestAnimationFrame(loop); }
+const ov = document.getElementById('overlay');
+function start() { reset(); state = 'play'; ov.style.display = 'none'; document.body.classList.add('playing'); cv.scrollIntoView({block: 'center', behavior: 'smooth'}); FX.chime(4, .1); }
+function win() {
+  state = 'won'; const secs = Math.round(t / 60);
+  if (!best || caught < best) { best = caught; try { localStorage.setItem('dw-laddoo-best', String(best)); } catch (e) { /* ignore */ } }
+  FX.show(10); setTimeout(() => FX.show(8), 2200);
+  setTimeout(() => {
+    document.getElementById('ovTitle').textContent = 'You lit up the town! 🎉';
+    document.getElementById('ovText').textContent = `You caught ${caught} sweets. ${lang === 'hi' ? 'शुभ दीपावली!' : lang === 'pa' ? 'ਦੀਵਾਲੀ ਦੀਆਂ ਵਧਾਈਆਂ!' : 'Happy Diwali!'}`;
+    document.getElementById('play').textContent = '▶ Play again'; ov.style.display = 'flex'; document.body.classList.remove('playing');
+  }, 2600);
+}
+document.getElementById('play').onclick = start;
+// controls: drag anywhere on the canvas, or arrow keys
+function moveTo(clientX) { const r = cv.getBoundingClientRect(); plate.x = Math.max(plate.w / 2, Math.min(W - plate.w / 2, (clientX - r.left) * W / r.width)); }
+cv.addEventListener('pointerdown', e => { cv.setPointerCapture(e.pointerId); moveTo(e.clientX); });
+cv.addEventListener('pointermove', e => { if (e.buttons || e.pointerType !== 'mouse') moveTo(e.clientX); else moveTo(e.clientX); });
+const keys = {};
+addEventListener('keydown', e => { if (e.key === 'ArrowLeft' || e.key === 'ArrowRight') { keys[e.key] = true; e.preventDefault(); } });
+addEventListener('keyup', e => { keys[e.key] = false; });
+setInterval(() => { if (keys.ArrowLeft) plate.x = Math.max(plate.w / 2, plate.x - 9); if (keys.ArrowRight) plate.x = Math.min(W - plate.w / 2, plate.x + 9); }, 16);
+document.getElementById('langs').addEventListener('click', e => {
+  const b = e.target.closest('[data-l]'); if (!b) return; lang = b.dataset.l;
+  document.querySelectorAll('#langs .dw-chip').forEach(x => x.classList.toggle('is-on', x === b));
+});
+size(); loop();
+Promise.all(["700 30px 'Baloo 2'", "700 30px 'Baloo Paaji 2'"].map(f => document.fonts.load(f, 'लड्डू ਲੱਡੂ'))).catch(() => {});
+
+</script>
+<footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
+    <div class="flex justify-center gap-6 mb-5 text-xl">
+        <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/helpivy_" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+    </div>
+    <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
+    <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>
+</footer>
+</body>
+</html>
