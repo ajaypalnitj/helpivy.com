@@ -1,0 +1,21 @@
+/* Diwali pages: warm night theme on top of the site styles */
+.dw-body { background: radial-gradient(1200px 600px at 50% -10%, #4c1d95, #1e1b4b 60%, #0f0a2a); color: #fef3c7; min-height: 100vh; }
+.dw-body .topnav { background: rgba(15,10,42,.85); border-bottom-color: rgba(250,204,21,.2); }
+.dw-body .nav-link { color: #fde68a; }
+.dw-body .nav-link:hover, .dw-body .nav-on { background: rgba(250,204,21,.15); color: #fff; }
+.dw-body .site-footer, .dw-body .site-footer a { color: #fcd34d; }
+.dw-title { font-family: 'Baloo 2', 'Poppins', sans-serif; font-weight: 700; color: #fde047; text-shadow: 0 0 24px rgba(250,204,21,.45); }
+.dw-card { background: rgba(255,255,255,.07); border: 1px solid rgba(250,204,21,.25); border-radius: 1.5rem; padding: 1.5rem; color: #fef3c7; text-decoration: none; display: block; transition: transform .2s, box-shadow .2s; }
+a.dw-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(250,204,21,.18); }
+.dw-card h2, .dw-card h3 { color: #fde047; font-weight: 600; }
+.dw-btn { display: inline-flex; align-items: center; gap: .4rem; padding: .6rem 1.3rem; border-radius: 9999px; font-weight: 600; color: #3b0764; background: linear-gradient(to right, #fde047, #fb923c); border: 0; cursor: pointer; text-decoration: none; }
+.dw-btn:disabled { opacity: .5; cursor: default; }
+.dw-btn-alt { background: rgba(255,255,255,.12); color: #fde68a; border: 1px solid rgba(250,204,21,.4); }
+.dw-input, .dw-select { background: rgba(255,255,255,.1); border: 1px solid rgba(250,204,21,.35); color: #fff; border-radius: .8rem; padding: .55rem .8rem; width: 100%; }
+.dw-select option { color: #111; }
+.dw-chip { padding: .4rem .9rem; border-radius: 9999px; border: 1px solid rgba(250,204,21,.4); color: #fde68a; background: transparent; cursor: pointer; font-weight: 600; }
+.dw-chip.is-on { background: #fde047; color: #3b0764; }
+.dw-muted { color: #e9d5ff; opacity: .85; }
+.sparkle { position: fixed; inset: 0; pointer-events: none; background-image: radial-gradient(2px 2px at 20% 30%, #fde68a, transparent), radial-gradient(1.5px 1.5px at 70% 20%, #fff, transparent), radial-gradient(2px 2px at 85% 60%, #fbcfe8, transparent), radial-gradient(1.5px 1.5px at 35% 80%, #fde68a, transparent), radial-gradient(1px 1px at 55% 45%, #fff, transparent); opacity: .7; z-index: 0; }
+.dw-main { position: relative; z-index: 1; }
+@media print { .no-print { display: none !important; } }

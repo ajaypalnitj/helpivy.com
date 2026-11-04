@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Light the diyas — Diwali game | Helpivy</title>
+    <meta name="description" content="A free Diwali game for kids: tap each diya to light it and hear festival words in Hindi or Punjabi.">
+    <link rel="canonical" href="https://helpivy.com/diwali/diyas/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://helpivy.com/diwali/diyas/">
+    <meta property="og:title" content="Light the diyas — Diwali game | Helpivy">
+    <meta property="og:description" content="A free Diwali game for kids: tap each diya to light it and hear festival words in Hindi or Punjabi.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/brand/logo.svg">
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Baloo+Paaji+2:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/diwali/diwali.css">
+</head>
+<body class="dw-body">
+<nav class="topnav">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+        <a href="/" class="flex items-center gap-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600"><img src="/brand/logo.svg" alt="Helpivy" class="w-9 h-9"><span class="hidden sm:inline">Helpivy</span></a>
+        <div class="flex items-center gap-0 sm:gap-3 text-sm sm:text-base">
+            <a href="/games/" class="nav-link">Games</a><a href="/painti/" class="nav-link">Painti</a><a href="/bolo/" class="nav-link">Bolo</a><a href="/support.html" class="nav-link">Support</a>
+        </div>
+    </div>
+</nav>
+<div class="sparkle" aria-hidden="true"></div>
+<main class="dw-main max-w-4xl mx-auto px-4 pt-8">
+<svg width="0" height="0" style="position:absolute"><defs>
+  <radialGradient id="gl"><stop offset="0" stop-color="#fde047" stop-opacity=".7"/><stop offset="1" stop-color="#fde047" stop-opacity="0"/></radialGradient>
+  <linearGradient id="fl" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fef08a"/><stop offset="1" stop-color="#f97316"/></linearGradient>
+  <linearGradient id="bw" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f59e0b"/><stop offset="1" stop-color="#9a3412"/></linearGradient>
+</defs></svg>
+<header class="text-center">
+    <h1 class="dw-title text-4xl sm:text-5xl">Light the diyas 🪔</h1>
+    <p class="dw-muted mt-2">Tap each diya to light it and hear the word. Light them all to hear the whole sentence.</p>
+    <div class="flex justify-center gap-2 mt-4" id="langs">
+        <button class="dw-chip is-on" data-l="hi" style="font-family:'Baloo 2'">हिंदी</button>
+        <button class="dw-chip" data-l="pa" style="font-family:'Baloo Paaji 2'">ਪੰਜਾਬੀ</button>
+    </div>
+</header>
+<section class="dw-card mt-8 text-center">
+    <p class="text-sm dw-muted" id="step"></p>
+    <div class="text-5xl mt-2" id="emoji"></div>
+    <div id="row" class="flex flex-wrap justify-center gap-3 sm:gap-5 mt-6"></div>
+    <div id="done" class="mt-6" hidden>
+        <p class="text-3xl" id="sentence"></p>
+        <p class="dw-muted mt-1" id="roman"></p>
+        <p class="text-yellow-200 mt-1" id="english"></p>
+        <div class="flex justify-center gap-3 mt-5"><button class="dw-btn dw-btn-alt" id="again">🔊 Hear again</button><button class="dw-btn" id="next">Next ➜</button></div>
+    </div>
+    <div id="finish" class="mt-2" hidden>
+        <p class="dw-title text-3xl">All the diyas are lit! ✨</p>
+        <p class="dw-muted mt-2" id="finishText"></p>
+        <div class="flex flex-wrap justify-center gap-3 mt-5"><a class="dw-btn" id="appLink" href="/bolo/">Keep learning</a><button class="dw-btn dw-btn-alt" id="restart">Play again</button></div>
+    </div>
+</section>
+<style>
+.diya-btn { width: 84px; background: none; border: 0; cursor: pointer; color: #fef3c7; }
+.diya-btn svg { width: 84px; height: 84px; }
+.diya-btn .flame, .diya-btn .glow { opacity: 0; transition: opacity .35s; }
+.diya-btn.lit .flame, .diya-btn.lit .glow { opacity: 1; }
+.diya-btn.lit .flame { animation: flick 1.2s ease-in-out infinite; transform-origin: 50% 44%; }
+.diya-btn.next svg { animation: pulse 1.2s ease-in-out infinite; }
+.diya-btn .w { display: block; font-size: 1.35rem; min-height: 2rem; }
+.diya-btn .r { display: block; font-size: .8rem; opacity: .8; min-height: 1.1rem; }
+@keyframes flick { 0%,100% { transform: scale(1) } 50% { transform: scale(1.08, .94) } }
+@keyframes pulse { 0%,100% { transform: scale(1) } 50% { transform: scale(1.08) } }
+@media (prefers-reduced-motion: reduce) { .diya-btn.lit .flame, .diya-btn.next svg { animation: none } }
+</style>
+</main>
+<script>
+
+const DIYA = `<svg viewBox="0 0 100 100" aria-hidden="true"><ellipse class="glow" cx="50" cy="40" rx="40" ry="34" fill="url(#gl)"/><path class="flame" d="M50 8 C62 26 60 40 50 44 C40 40 38 26 50 8Z" fill="url(#fl)"/><path d="M12 56 Q50 98 88 56 Q92 52 94 48 L6 48 Q8 52 12 56Z" fill="url(#bw)"/><circle cx="34" cy="60" r="2.5" fill="#fde68a"/><circle cx="50" cy="64" r="2.5" fill="#fde68a"/><circle cx="66" cy="60" r="2.5" fill="#fde68a"/></svg>`;
+const DATA = {
+  hi: {font: "'Baloo 2'", app: '/bolo/', appName: 'Bolo', s: [
+    {clip: 'ln_sfest_diwali', g: 'आज दिवाली है', r: 'Aaj Diwali hai', e: 'Today is Diwali', emoji: '🪔', w: ['sw_aaj', 'sw_diwali', 'w_hai']},
+    {clip: 'ln_sfest_sweets', g: 'मुझे मिठाई पसंद है', r: 'Mujhe mithaai pasand hai', e: 'I like sweets', emoji: '🍬', w: ['w_mujhe', 'sw_mithaai', 'sw_pasand', 'w_hai']},
+    {clip: 'ln_sfest_diya', g: 'दिवाली पर हम दीये जलाते हैं', r: 'Diwali par ham diye jalaate hain', e: 'On Diwali we light diyas', emoji: '🪔', w: ['sw_diwali', 'sw_par', 'sw_ham', 'sw_deeye', 'sw_jlaate', 'w_hain']},
+  ]},
+  pa: {font: "'Baloo Paaji 2'", app: '/painti/', appName: 'Painti', s: [
+    {clip: 'ln_sfest_diwali', g: 'ਦੀਵਾਲੀ ਤੇ ਦੀਵੇ ਜਗਦੇ ਹਨ', r: 'Diwali te deeve jagde hun', e: 'At Diwali, lamps light up', emoji: '🪔', w: ['sw_diwali', 'w_te', 'sw_deeve', 'sw_jagde', 'w_han']},
+    {clip: 'ln_sfest_fireworks', g: 'ਮੈਨੂੰ ਪਟਾਕੇ ਪਸੰਦ ਹਨ', r: 'Mainu pataake pasand hun', e: 'I like fireworks', emoji: '🎆', w: ['sw_mainu', 'sw_pataake', 'sw_pasand', 'w_han']},
+  ]},
+};
+let lang = 'hi', idx = 0, lit = 0;
+const audio = new Audio();
+function say(clip) { audio.src = `/diwali/audio/${lang}/${clip}.mp3`; audio.currentTime = 0; audio.play().catch(() => {}); }
+const $ = id => document.getElementById(id);
+function render() {
+  const L = DATA[lang], s = L.s[idx];
+  lit = 0;
+  const words = s.g.split(' '), roman = s.r.split(' ');
+  $('step').textContent = `Sentence ${idx + 1} of ${L.s.length}`;
+  $('emoji').textContent = s.emoji;
+  $('done').hidden = true; $('finish').hidden = true; $('row').hidden = false;
+  $('row').innerHTML = s.w.map((c, i) => `<button class="diya-btn${i === 0 ? ' next' : ''}" data-i="${i}" aria-label="Diya ${i + 1}">${DIYA}<span class="w" style="font-family:${L.font}"></span><span class="r"></span></button>`).join('');
+  $('row').querySelectorAll('.diya-btn').forEach((b, i) => b.addEventListener('click', () => {
+    if (i !== lit) return;
+    b.classList.add('lit'); b.classList.remove('next');
+    b.querySelector('.w').textContent = words[i]; b.querySelector('.r').textContent = roman[i];
+    say(s.w[i]); lit++;
+    const nb = $('row').querySelectorAll('.diya-btn')[lit];
+    if (nb) nb.classList.add('next');
+    else setTimeout(() => {
+      $('sentence').textContent = s.g; $('sentence').style.fontFamily = L.font;
+      $('roman').textContent = s.r; $('english').textContent = s.e; $('done').hidden = false; say(s.clip);
+    }, 900);
+  }));
+}
+$('again').onclick = () => say(DATA[lang].s[idx].clip);
+$('next').onclick = () => {
+  const L = DATA[lang];
+  if (idx + 1 < L.s.length) { idx++; render(); return; }
+  $('row').hidden = true; $('done').hidden = true; $('finish').hidden = false;
+  $('finishText').textContent = `Want more words like these? ${L.appName} teaches children to read ${lang === 'hi' ? 'Hindi' : 'Punjabi'}, one sound at a time.`;
+  $('appLink').href = L.app; $('appLink').textContent = `Try ${L.appName}`;
+};
+$('restart').onclick = () => { idx = 0; render(); };
+$('langs').addEventListener('click', e => {
+  const b = e.target.closest('[data-l]'); if (!b) return;
+  lang = b.dataset.l; idx = 0;
+  document.querySelectorAll('#langs .dw-chip').forEach(x => x.classList.toggle('is-on', x === b)); render();
+});
+render();
+
+</script>
+<footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
+    <div class="flex justify-center gap-6 mb-5 text-xl">
+        <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://twitter.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+    </div>
+    <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
+    <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>
+</footer>
+</body>
+</html>
