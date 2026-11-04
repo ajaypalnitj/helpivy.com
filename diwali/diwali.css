@@ -25,3 +25,5 @@ a.dw-card:hover { transform: translateY(-4px); box-shadow: 0 16px 40px rgba(250,
 .lantern { position: fixed; bottom: -60px; width: 26px; height: 34px; border-radius: 40% 40% 30% 30%; background: radial-gradient(circle at 50% 60%, #fff7ae, #fb923c 60%, #c2410c); box-shadow: 0 0 22px 6px rgba(251,146,60,.45); opacity: .85; animation: rise linear infinite; z-index: 0; pointer-events: none; }
 @keyframes rise { from { transform: translateY(0) translateX(0); } 50% { transform: translateY(-55vh) translateX(18px); } to { transform: translateY(-115vh) translateX(-10px); opacity: 0; } }
 @media (prefers-reduced-motion: reduce) { .lantern { display: none; } }
+.dw-chip-dark { background: rgba(15,10,42,.65); }
+.dw-chip-dark.is-on { background: #fde047; color: #3b0764; }

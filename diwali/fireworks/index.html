@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fireworks sky — Diwali | Helpivy</title>
+    <meta name="description" content="Launch musical fireworks, draw with a sparkler and write a name in fireworks. A free Diwali toy for kids, with no real fireworks needed.">
+    <link rel="canonical" href="https://helpivy.com/diwali/fireworks/">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://helpivy.com/diwali/fireworks/">
+    <meta property="og:title" content="Fireworks sky — Diwali | Helpivy">
+    <meta property="og:description" content="Launch musical fireworks, draw with a sparkler and write a name in fireworks. A free Diwali toy for kids, with no real fireworks needed.">
+    <meta name="twitter:card" content="summary">
+    <link rel="icon" type="image/svg+xml" href="/brand/logo.svg">
+    <link rel="apple-touch-icon" href="/brand/apple-touch-icon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="/css/season.css">
+    <script src="/js/season.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700&family=Baloo+Paaji+2:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/diwali/diwali.css">
+</head>
+<body class="dw-body">
+<nav class="topnav">
+    <div class="max-w-5xl mx-auto flex items-center justify-between gap-4 px-4 py-3">
+        <a href="/" class="flex items-center gap-2 text-2xl font-semibold text-transparent bg-clip-text bg-gradient-to-r from-purple-600 to-pink-600"><img src="/brand/logo.svg" alt="Helpivy" class="w-9 h-9"><span class="hidden sm:inline">Helpivy</span></a>
+        <div class="flex items-center gap-0 sm:gap-3 text-sm sm:text-base">
+            <a href="/games/" class="nav-link">Games</a><a href="/painti/" class="nav-link">Painti</a><a href="/bolo/" class="nav-link">Bolo</a><a href="/support.html" class="nav-link">Support</a>
+        </div>
+    </div>
+</nav>
+<div class="sparkle" aria-hidden="true"></div>
+<main class="dw-main max-w-4xl mx-auto px-4 pt-8">
+<header class="text-center">
+    <h1 class="dw-title text-4xl sm:text-5xl">Fireworks sky 🎆</h1>
+    <p class="dw-muted mt-2">Tap the sky to launch fireworks, each with its own note. Switch to the sparkler and draw with light, or write a name in fireworks.</p>
+</header>
+<div class="relative mt-6">
+    <canvas id="sky" class="w-full rounded-3xl shadow-2xl touch-none block" style="height:min(70vh,640px);background:#0b0720" aria-label="Night sky: tap to launch fireworks"></canvas>
+    <div class="absolute top-3 left-3 flex gap-2" id="modes">
+        <button class="dw-chip dw-chip-dark is-on" data-m="fw">🎆 Fireworks</button>
+        <button class="dw-chip dw-chip-dark" data-m="sp">✨ Sparkler</button>
+    </div>
+</div>
+<div class="dw-card mt-6 grid gap-4 sm:grid-cols-[1fr_auto] items-end">
+    <label class="block"><span class="font-semibold">Write in the sky</span>
+        <div class="flex flex-wrap gap-2 mt-1">
+            <select id="msg" class="dw-select" style="max-width:15rem">
+                <option value="Happy Diwali">Happy Diwali</option>
+                <option value="शुभ दीपावली">शुभ दीपावली</option>
+                <option value="ਦੀਵਾਲੀ ਮੁਬਾਰਕ">ਦੀਵਾਲੀ ਮੁਬਾਰਕ</option>
+                <option value="Bandi Chhor Divas">Bandi Chhor Divas</option>
+            </select>
+            <input id="name" class="dw-input" style="max-width:14rem" maxlength="16" placeholder="…or a name" autocomplete="off">
+            <button id="write" class="dw-btn">✍️ Write it</button>
+        </div></label>
+    <button id="finale" class="dw-btn text-lg">🎇 Grand finale</button>
+</div>
+</main>
+<script src="/diwali/fx.js"></script>
+<script>
+
+const cv = document.getElementById('sky'), ctx = cv.getContext('2d');
+const calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+let W, H, dpr, parts = [], rockets = [], mode = 'fw', skyline = [];
+function size() {
+  dpr = Math.min(devicePixelRatio || 1, 2); const r = cv.getBoundingClientRect(); W = r.width; H = r.height;
+  cv.width = W * dpr; cv.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  skyline = []; let x = 0; while (x < W) { const w = 30 + Math.random() * 60, h = 40 + Math.random() * H * .22; skyline.push([x, w, h, Array.from({length: 6}, () => [Math.random(), Math.random(), Math.random() < .55])]); x += w; }
+  ctx.fillStyle = '#0b0720'; ctx.fillRect(0, 0, W, H);
+}
+size(); addEventListener('resize', size);
+const PAL = ['#fde047', '#fb923c', '#f472b6', '#22d3ee', '#a78bfa', '#4ade80', '#f87171', '#ffffff'];
+const pick = () => PAL[Math.floor(Math.random() * PAL.length)];
+const MAX = calm ? 600 : 2600;
+function add(p) { if (parts.length < MAX) parts.push(p); }
+function launch(tx, ty, opts = {}) { rockets.push({x: tx + (Math.random() - .5) * 40, y: H, tx, ty, c: opts.c || pick(), kind: opts.kind, text: opts.text}); }
+function explode(x, y, c, kind) {
+  kind = kind || ['peony', 'ring', 'willow', 'heart', 'crossette', 'peony'][Math.floor(Math.random() * 6)];
+  const c2 = pick(), n = calm ? 30 : kind === 'willow' ? 90 : 110;
+  for (let i = 0; i < n; i++) {
+    const a = i / n * Math.PI * 2;
+    let vx, vy, s;
+    if (kind === 'heart') { const t = a, hx = 16 * Math.sin(t) ** 3, hy = -(13 * Math.cos(t) - 5 * Math.cos(2 * t) - 2 * Math.cos(3 * t) - Math.cos(4 * t)); vx = hx * .28; vy = hy * .28; }
+    else if (kind === 'ring') { s = 4.4; vx = Math.cos(a) * s; vy = Math.sin(a) * s; }
+    else { s = 1 + Math.random() * (kind === 'willow' ? 3.2 : 5); vx = Math.cos(a) * s; vy = Math.sin(a) * s; }
+    add({x, y, vx, vy, g: kind === 'willow' ? .035 : .055, drag: kind === 'willow' ? .985 : .972, life: kind === 'willow' ? 150 : 90 + Math.random() * 30, max: 150, c: kind === 'willow' ? '#fcd34d' : (i % 3 ? c : c2), r: 2.1, split: kind === 'crossette' && i % 6 === 0});
+  }
+  // the note: higher in the sky = higher note
+  FX.chime(Math.max(0, Math.min(7, Math.round((1 - y / H) * 8))), .1);
+}
+function writeSky(text) {
+  const off = document.createElement('canvas'), o = off.getContext('2d');
+  const font = /[਀-੿]/.test(text) ? "'Baloo Paaji 2'" : "'Baloo 2'";
+  let fs = Math.min(140, W / Math.max(4, text.length) * 1.7);
+  off.width = W; off.height = H; o.font = `700 ${fs}px ${font}`;
+  while (o.measureText(text).width > W * .9 && fs > 24) { fs -= 4; o.font = `700 ${fs}px ${font}`; }
+  o.fillStyle = '#fff'; o.textAlign = 'center'; o.textBaseline = 'middle'; o.fillText(text, W / 2, H * .38);
+  const img = o.getImageData(0, 0, W, H).data, pts = [], step = calm ? 7 : 4;
+  for (let y = 0; y < H; y += step) for (let x = 0; x < W; x += step) if (img[(y * W + x) * 4 + 3] > 128) pts.push([x, y]);
+  const cx = W / 2, cy = H * .38, c = pick();
+  rockets.push({x: cx, y: H, tx: cx, ty: cy, c, onBoom() {
+    FX.chime(6, .12); FX.chime(4, .08);
+    for (const [px, py] of pts) add({x: cx, y: cy, tx: px, ty: py, home: true, t: 0, life: 260, max: 260, c: Math.random() < .5 ? c : '#fef9c3', r: 1.7});
+  }});
+}
+function frame() {
+  ctx.globalCompositeOperation = 'source-over';
+  ctx.fillStyle = mode === 'sp' ? 'rgba(11,7,32,.12)' : 'rgba(11,7,32,.22)'; ctx.fillRect(0, 0, W, H);
+  ctx.globalCompositeOperation = 'lighter';
+  for (const r of rockets) {
+    const dx = r.tx - r.x, dy = r.ty - r.y; r.x += dx * .06; r.y += dy * .06 - 2;
+    ctx.fillStyle = '#fff7ed'; ctx.beginPath(); ctx.arc(r.x, r.y, 2.4, 0, 7); ctx.fill();
+    add({x: r.x, y: r.y, vx: (Math.random() - .5) * .8, vy: 1 + Math.random(), g: .02, drag: .96, life: 22, max: 22, c: '#fdba74', r: 1.5});
+    if (r.y <= r.ty + 6) { r.done = true; r.onBoom ? r.onBoom() : explode(r.x, r.y, r.c, r.kind); }
+  }
+  rockets = rockets.filter(r => !r.done);
+  for (const p of parts) {
+    if (p.home) { p.t++; const k = Math.min(1, p.t / 50), e = 1 - (1 - k) ** 3; p.x += (p.tx - p.x) * (k < 1 ? .12 : 0); p.y += (p.ty - p.y) * (k < 1 ? .12 : 0); if (p.t > 190) { p.home = false; p.vx = (Math.random() - .5) * .6; p.vy = 0; p.g = .03; p.drag = .99; } }
+    else { p.vx *= p.drag; p.vy = p.vy * p.drag + p.g; p.x += p.vx; p.y += p.vy; }
+    p.life--;
+    if (p.split && p.life === 55) { for (let i = 0; i < 6; i++) { const a = i * Math.PI / 3; add({x: p.x, y: p.y, vx: Math.cos(a) * 2, vy: Math.sin(a) * 2, g: .05, drag: .97, life: 40, max: 40, c: '#fff', r: 1.5}); } }
+    ctx.globalAlpha = Math.max(0, Math.min(1, p.life / p.max * 1.4));
+    ctx.fillStyle = p.c; ctx.beginPath(); ctx.arc(p.x, p.y, p.r * (.6 + Math.random() * .7), 0, 7); ctx.fill();
+  }
+  ctx.globalAlpha = 1; parts = parts.filter(p => p.life > 0 && p.y < H + 20);
+  // city skyline with lit windows and little diyas on the roofs
+  ctx.globalCompositeOperation = 'source-over';
+  for (const [x, w, h, wins] of skyline) {
+    ctx.fillStyle = '#05030f'; ctx.fillRect(x, H - h, w + 1, h);
+    for (const [u, v, on] of wins) if (on) { ctx.fillStyle = 'rgba(253,224,71,.75)'; ctx.fillRect(x + 6 + u * (w - 16), H - h + 10 + v * (h - 24), 6, 8); }
+    ctx.fillStyle = '#f97316'; ctx.beginPath(); ctx.arc(x + w / 2, H - h - 3, 3.2, 0, 7); ctx.fill();
+    ctx.fillStyle = 'rgba(253,224,71,.35)'; ctx.beginPath(); ctx.arc(x + w / 2, H - h - 5, 9, 0, 7); ctx.fill();
+  }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+function pos(e) { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; }
+let drawing = false, lastNote = 0;
+cv.addEventListener('pointerdown', e => {
+  cv.setPointerCapture(e.pointerId); const [x, y] = pos(e);
+  if (mode === 'fw') launch(x, Math.min(y, H * .78)); else { drawing = true; spark(x, y); }
+});
+cv.addEventListener('pointermove', e => { if (drawing) { const [x, y] = pos(e); spark(x, y); } });
+const stop = () => { drawing = false; };
+cv.addEventListener('pointerup', stop); cv.addEventListener('pointercancel', stop);
+function spark(x, y) {
+  for (let i = 0; i < (calm ? 4 : 14); i++) { const a = Math.random() * 7, s = Math.random() * 3.4; add({x, y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, g: .06, drag: .93, life: 26 + Math.random() * 14, max: 40, c: Math.random() < .7 ? '#fde68a' : '#ffffff', r: 1.3}); }
+  add({x, y, vx: 0, vy: 0, g: 0, drag: 1, life: 70, max: 70, c: '#fbbf24', r: 3});
+  const now = performance.now(); if (now - lastNote > 160) { lastNote = now; FX.chime(Math.floor(Math.random() * 8), .03); }
+}
+document.getElementById('modes').addEventListener('click', e => {
+  const b = e.target.closest('[data-m]'); if (!b) return; mode = b.dataset.m;
+  document.querySelectorAll('#modes [data-m]').forEach(x => x.classList.toggle('is-on', x === b));
+});
+document.getElementById('write').onclick = () => { const t = document.getElementById('name').value.trim() || document.getElementById('msg').value; writeSky(t); };
+document.getElementById('finale').onclick = () => {
+  for (let i = 0; i < 18; i++) setTimeout(() => launch(W * (.1 + Math.random() * .8), H * (.12 + Math.random() * .35)), i * 180);
+  setTimeout(() => writeSky(document.getElementById('msg').value), 3600);
+  setTimeout(() => { for (let i = 0; i < 10; i++) setTimeout(() => launch(W * (.1 + Math.random() * .8), H * (.1 + Math.random() * .3), {kind: i % 2 ? 'willow' : 'ring'}), i * 150); }, 7200);
+};
+Promise.all(["700 80px 'Baloo 2'", "700 80px 'Baloo Paaji 2'"].map(f => document.fonts.load(f, 'दीपावली ਦੀਵਾਲੀ Happy'))).catch(() => {});
+setTimeout(() => { for (let i = 0; i < 4; i++) setTimeout(() => launch(W * (.2 + i * .2), H * (.2 + Math.random() * .2)), i * 300); }, 500);
+
+</script>
+<footer class="site-footer text-center text-sm text-gray-500 mt-14 pb-10 px-4">
+    <div class="flex justify-center gap-6 mb-5 text-xl">
+        <a href="https://www.facebook.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="https://www.instagram.com/helpivy_" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://x.com/helpivy" target="_blank" rel="noopener noreferrer" aria-label="Helpivy on X"><i class="fa-brands fa-x-twitter"></i></a>
+    </div>
+    <p class="space-x-3"><a href="/">Home</a><span>·</span><a href="/games/">Games</a><span>·</span><a href="/painti/">Painti</a><span>·</span><a href="/bolo/">Bolo</a><span>·</span><a href="/privacy/">Privacy</a><span>·</span><a href="/support.html">Support</a></p>
+    <p class="text-gray-400 mt-3">© Helpivy · <a href="mailto:help@helpivy.com">help@helpivy.com</a></p>
+</footer>
+</body>
+</html>

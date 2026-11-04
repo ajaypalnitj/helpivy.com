@@ -1,0 +1,24 @@
+/* Seasonal theme (Diwali 2026). Active only while <html data-season="diwali">; js/season.js decides. */
+html[data-season="diwali"] body:not(.dw-body) { background: radial-gradient(900px 500px at 0% 0%, rgba(251,191,36,.18), transparent 60%), radial-gradient(900px 500px at 100% 0%, rgba(236,72,153,.14), transparent 60%), linear-gradient(180deg, #fff7ed, #fdf2f8 60%, #fff7ed) !important; }
+html[data-season="diwali"] .toran { display: block; }
+.toran { display: none; height: 46px; background-repeat: repeat-x; background-size: 92px 46px; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 92 46'%3E%3Cpath d='M0 6 Q46 26 92 6' stroke='%23b45309' stroke-width='2' fill='none'/%3E%3Cellipse cx='23' cy='15' rx='9' ry='4' fill='%2315803d' transform='rotate(25 23 15)'/%3E%3Cellipse cx='69' cy='15' rx='9' ry='4' fill='%2315803d' transform='rotate(-25 69 15)'/%3E%3Ccircle cx='10' cy='10' r='7' fill='%23f97316'/%3E%3Ccircle cx='36' cy='15' r='7' fill='%23facc15'/%3E%3Ccircle cx='56' cy='15' r='7' fill='%23f97316'/%3E%3Ccircle cx='82' cy='10' r='7' fill='%23facc15'/%3E%3Cline x1='46' y1='16' x2='46' y2='34' stroke='%23facc15' stroke-width='2'/%3E%3Ccircle cx='46' cy='38' r='6' fill='%23ef4444'/%3E%3Ccircle cx='46' cy='38' r='2.5' fill='%23fde68a'/%3E%3C/svg%3E"); position: sticky; top: 61px; z-index: 19; pointer-events: none; filter: drop-shadow(0 3px 4px rgba(180,83,9,.25)); }
+html[data-season="diwali"] .topnav { background: rgba(255,247,237,.92); border-bottom-color: #fed7aa; }
+html[data-season="diwali"] .dw-body .topnav { background: rgba(15,10,42,.85); }
+html[data-season="diwali"] .play { background: linear-gradient(to right, #f59e0b, #ea580c 45%, #db2777); box-shadow: 0 6px 18px rgba(234,88,12,.3); }
+html[data-season="diwali"] .section-title::after { content: " 🪔"; }
+html[data-season="diwali"] .promise { background: linear-gradient(135deg, #7c2d12, #c2410c 45%, #be185d); }
+html[data-season="diwali"] .site-footer::before { content: "🪔 🪔 🪔 🪔 🪔"; display: block; letter-spacing: .6rem; margin-bottom: .8rem; filter: drop-shadow(0 0 6px rgba(251,191,36,.7)); }
+.season-greeting { display: inline-block; margin-bottom: 1.4rem; padding: .35rem 1rem; border-radius: 9999px; background: linear-gradient(90deg, #fde68a, #fbcfe8); color: #7c2d12; font-weight: 600; box-shadow: 0 4px 14px rgba(234,88,12,.18); }
+.season-greeting a { color: #be185d; text-decoration: underline; }
+.season-sparkles { position: fixed; inset: 0; pointer-events: none; z-index: 1; background-image: radial-gradient(3px 3px at 12% 22%, #fbbf24, transparent), radial-gradient(2px 2px at 82% 18%, #f472b6, transparent), radial-gradient(3px 3px at 64% 72%, #fbbf24, transparent), radial-gradient(2px 2px at 28% 84%, #fb923c, transparent), radial-gradient(2px 2px at 92% 56%, #fde047, transparent), radial-gradient(2px 2px at 6% 60%, #f472b6, transparent); animation: twinkle 3.5s ease-in-out infinite alternate; }
+@keyframes twinkle { from { opacity: .35; } to { opacity: 1; } }
+.season-toggle { position: fixed; left: 14px; bottom: 14px; z-index: 60; padding: .5rem .9rem; border-radius: 9999px; font-size: .85rem; font-weight: 600; border: 1px solid #fdba74; background: rgba(255,247,237,.95); color: #9a3412; cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.dw-body .season-toggle { background: rgba(15,10,42,.85); color: #fde68a; border-color: rgba(250,204,21,.4); }
+@media (prefers-reduced-motion: reduce) { .season-sparkles { animation: none; } }
+@media print { .toran, .season-sparkles, .season-toggle { display: none !important; } }
+/* footer links wrap on phones */
+.site-footer p { display: flex; flex-wrap: wrap; justify-content: center; gap: .25rem .75rem; }
+.site-footer p.space-x-3 > * { margin: 0 !important; }
+.season-strip { display: none; text-align: center; margin: .6rem auto 0; max-width: 64rem; padding: 0 1rem; }
+html[data-season="diwali"] .season-strip { display: block; }
+.season-strip a { display: inline-block; padding: .35rem 1rem; border-radius: 9999px; background: linear-gradient(90deg, #fde68a, #fbcfe8); color: #7c2d12; font-weight: 600; text-decoration: none; font-size: .9rem; }
