@@ -33,33 +33,43 @@
 <main class="max-w-3xl mx-auto px-4 pt-8">
     <header class="text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-semibold text-gray-800 mt-4">Chaupal — Privacy Policy</h1>
-        <p class="text-gray-500 mt-2">Android app <code>com.helpivy.chaupal</code> and <a href="https://chaupal.helpivy.com">chaupal.helpivy.com</a> · Effective 9 November 2026</p>
+        <p class="text-gray-500 mt-2">Android app <code>com.helpivy.chaupal</code> and <a href="https://chaupal.helpivy.com">chaupal.helpivy.com</a> · Effective 19 November 2026</p>
     </header>
     <article class="doc bg-white/80 rounded-3xl shadow-lg p-6 sm:p-10">
         <div class="summary-box">
             <p class="!text-gray-800 font-semibold !mt-0">The short version</p>
             <ul>
                 <li>Chaupal lets you play Ludo and Snakes &amp; Ladders against the computer, with people beside you, or with family far away through a link.</li>
-                <li>No accounts, no ads, no analytics, no trackers. No scores or coins.</li>
+                <li>No accounts, no ads, no analytics companies, no trackers. No scores or coins.</li>
                 <li>Online game rooms, and any voice notes sent in them, delete themselves after 3 quiet days.</li>
             </ul>
         </div>
+
+        <h2>Data at a glance</h2>
+        <table>
+            <tr><th>What</th><th>Where it lives</th><th>How long</th></tr>
+            <tr><td>Games against the computer or around one phone, settings, an unfinished game</td><td>Only on your phone (or in your browser)</td><td>Until you uninstall or clear the site's data</td></tr>
+            <tr><td>An online room: players' names, a random code per phone, the game, phrases, emoji, the last six voice notes</td><td>That room on our server (Cloudflare)</td><td>Deleted after 3 days with no play</td></tr>
+            <tr><td>A one-tap game invite to a family member</td><td>Your family's private space on our server (Cloudflare)</td><td>Until the next invite replaces it, or the family is deleted</td></tr>
+            <tr><td>Daily counts of games finished (numbers only)</td><td>Our server, not linked to you</td><td>Kept as totals</td></tr>
+        </table>
 
         <h2>Playing on your phone</h2>
         <p>Games against the computer or passed around the table stay on your phone. Your language, settings and an unfinished game are saved only on your phone, or in your browser on the website.</p>
 
         <h2>Playing with family online</h2>
-        <p>When you tap "Play with family", we make a game room on our server and give you a link to share, for example on WhatsApp. Anyone with the link can join that room. The room keeps:</p>
+        <p>When you tap "Play with family", we make a game room on our server and give you a link to share, for example on WhatsApp. Anyone with the link can open that room and see who is playing which game; while there are free seats, they can join. The room keeps:</p>
         <ul>
             <li>the name or nickname each player types (like "Nani" or "Simran");</li>
+            <li>a random code made by each phone, so a player who drops off gets their own seat back;</li>
             <li>the game: whose turn it is and where the pieces are;</li>
-            <li>preset phrases and emoji you send, and the last few short voice notes, if you choose to record one.</li>
+            <li>preset phrases and emoji you send, and the last six short voice notes (up to 20 seconds each), if you choose to record one. Everyone seated in the room can hear them.</li>
         </ul>
         <p>A room is deleted automatically, with everything in it, after 3 days with no one playing. We don't use rooms for anything else.</p>
-        <p>If your family uses our other family apps, Chaupal can show family members as one-tap invites. That uses the shared family space described in our <a href="/privacy/kissa.html">Kissa policy</a>.</p>
+        <p>If your family uses our other family apps, Chaupal can show family members as one-tap invites. The invite (which room, which game, who it is for) is kept in your family's shared space, described in our <a href="/privacy/kissa.html">Kissa policy</a>, and the next invite replaces it.</p>
 
         <h2>Where it is stored</h2>
-        <p>Game rooms run on Cloudflare, over encrypted connections (HTTPS). Your internet address is used for a moment to deliver the game and stop abuse, and is not stored in the room.</p>
+        <p>Game rooms run on Cloudflare, over encrypted connections (HTTPS and secure WebSockets). Your internet address is used for a moment to deliver the game and stop abuse, and is not stored in the room. Cloudflare keeps short technical logs of requests for a few days; when a phone opens a room these include the room's address, with the name the player typed.</p>
 
         <h2>Permissions</h2>
         <ul>
@@ -67,24 +77,26 @@
         </ul>
 
         <h2>Children</h2>
-        <p>Chaupal is made for adults to play with their families. It is not directed to children, has no accounts, and collects nothing beyond what's described above.</p>
+        <p>Chaupal is made for adults to play with their families, and is not directed to children. It has no accounts, no free-text chat (only preset phrases, emoji and voice notes) and collects nothing beyond what's described above. Anyone who has a room's link can join it while there's a seat, so share links only with family. A parent or guardian should supervise a child who plays online.</p>
 
         <h2>Third parties</h2>
-        <p>No advertising, analytics or social SDKs. We share nothing with anyone except Cloudflare, which runs the game rooms.</p>
+        <p>No advertising, analytics or social SDKs, and no third-party trackers. We share nothing with anyone except Cloudflare, which runs the game rooms.</p>
 
-                        <h2>Reading aloud</h2>
-        <p>"Read this screen to me" plays recordings that come with the app. Names and words your family typed are spoken by your phone's own voice, on your phone. Nothing is sent anywhere to be read aloud.</p>
+        <h2>Reading aloud</h2>
+        <p>"Read this screen to me" plays recordings that come with the app. Names and words your family typed are spoken by a computer voice. In the Android app that is your phone's own text-to-speech, on your phone. On the website it is your browser's voice: some browsers (for example Chrome on a computer) use an online voice from their maker, such as Google, which then receives those words to speak them. We send nothing anywhere to be read aloud.</p>
 
-                <h2>One family across our apps on your phone</h2>
+        <h2>One family across our apps on your phone</h2>
         <p>If you use more than one of our family apps on the same Android phone, they share your family sign-in (a random device key, your family, your language) with each other, so you don't have to join again in each one. Android only lets apps signed by us read it. Other apps can't. The websites don't share it.</p>
 
         <h2>Family and guests at the table</h2>
-        <p>When a family member joins a game room through our family apps, the room gets a short-lived pass (12 hours) with the room code, a scrambled form of the family (never its id) and their name, so the room knows they're family. Anyone else who opens the link is shown to everyone as "Guest (not in the family)", can't send voice notes, and can be removed by whoever made the room.</p>
+        <p>When a family member joins a game room through our family apps, the room gets a short-lived pass (12 hours) with the room code, a scrambled form of the family (never its id) and their name, so the room knows they're family. In a room a family member made through our family apps, anyone else who opens the link is shown to everyone as "Guest (not in the family)", can't send voice notes, and can be removed by whoever made the room. Guests can still hear the voice notes sent in the room while they are seated.</p>
 
         <h2>Learning what helps</h2>
-        <p>To learn whether the app is helping, our server counts a few things each day, per app: for example how many stories were recorded or games finished. Each count is only a number. No name, family, phone or internet address is stored with it.</p>
-        <p>In Settings you can answer "Is this helping?". We keep your answer with the app's name, its language and the day, plus only what you choose to add (words, a short voice note, or an email if you'd like a reply). It isn't linked to your name or family.</p>
+        <p>To learn whether the app is helping, our server counts a few things each day, per app: for example how many games were finished. This is our own count, not an analytics company. Each count is only a number: no name, family, phone or internet address is stored with it.</p>
         <p>To stop abuse, we keep a scrambled (keyed hash) form of your internet address together with the day for one day only, then delete it.</p>
+
+        <h2>Family home</h2>
+        <p>If Chaupal is connected to your family, our server remembers when you last opened it, so the family home can show what's new. This is deleted when you leave or the family is deleted.</p>
 
         <h2>Changes</h2>
         <p>If this policy changes, the new version will be posted here with a new date.</p>

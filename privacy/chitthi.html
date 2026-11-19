@@ -33,41 +33,54 @@
 <main class="max-w-3xl mx-auto px-4 pt-8">
     <header class="text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-semibold text-gray-800 mt-4">Chitthi — Privacy Policy</h1>
-        <p class="text-gray-500 mt-2">Android app <code>com.helpivy.chitthi</code> and <a href="https://chitthi.helpivy.com">chitthi.helpivy.com</a> · Effective 9 November 2026</p>
+        <p class="text-gray-500 mt-2">Android app <code>com.helpivy.chitthi</code> and <a href="https://chitthi.helpivy.com">chitthi.helpivy.com</a> · Effective 19 November 2026</p>
     </header>
     <article class="doc bg-white/80 rounded-3xl shadow-lg p-6 sm:p-10">
         <div class="summary-box">
             <p class="!text-gray-800 font-semibold !mt-0">The short version</p>
             <ul>
-                <li>Chitthi turns a family's week (photos, drawings, voice notes) into one newspaper for a grandparent. Only your family can see it.</li>
-                <li>Parents post their children's news. Children don't have accounts.</li>
-                <li>No email, phone number or password. No ads, no analytics, no trackers. We never sell or share your family's posts.</li>
+                <li>Chitthi turns a family's week (photos, drawings, voice notes) into one newspaper for a grandparent. Only your family can see it, unless you print an edition with QR codes (see below).</li>
+                <li>Parents post their children's news. Nobody has an account; a grandchild joins the family space only if the family invites them.</li>
+                <li>No email, phone number or password. No ads, no analytics companies, no trackers. We never sell or share your family's posts.</li>
                 <li>Download any edition free, and delete everything any time.</li>
             </ul>
         </div>
 
+        <h2>Data at a glance</h2>
+        <table>
+            <tr><th>What</th><th>Where it lives</th><th>How long</th></tr>
+            <tr><td>Posts (photos, drawings, captions, voice notes, a child's first name), replies, hearts, reports</td><td>Your family's private space on our server (Cloudflare)</td><td>Until taken out, or the family's data is deleted</td></tr>
+            <tr><td>The family's day and time zone for the paper; that an edition was opened</td><td>Your family's private space on our server (Cloudflare)</td><td>Until the family is deleted</td></tr>
+            <tr><td>A random device key</td><td>On your phone; our server keeps only a scrambled (hashed) copy</td><td>Until that phone is signed out; then a scrambled trace for up to 180 days, so the phone can be told why</td></tr>
+            <tr><td>A printed edition's QR links</td><td>A public link per voice note (with that page's photo, caption and names)</td><td>Until that item is taken out</td></tr>
+            <tr><td>Daily counts (numbers only) and any "Is this helping?" answer</td><td>Our server, not linked to your name or family</td><td>Counts as totals; ask us to delete an answer</td></tr>
+        </table>
+
         <h2>What we keep, and why</h2>
         <ul>
             <li><strong>Names you type:</strong> your family's name and each member's first name or nickname, and the first names of children a parent posts about.</li>
-            <li><strong>Posts:</strong> photos, short captions, voice notes and "teach-me" items you choose to add, plus hearts and voice replies.</li>
+            <li><strong>Posts:</strong> photos, drawings, short captions, voice notes and "teach-me" items you choose to add, plus hearts, voice replies and reports.</li>
+            <li><strong>That an edition was opened</strong>, so the family can see "Nani opened it".</li>
             <li><strong>Your family's chosen day and time zone</strong>, so each edition arrives at the right moment.</li>
             <li><strong>A device key:</strong> a random code on your phone that lets it into your family space. We keep only a scrambled (hashed) copy.</li>
         </ul>
         <p>Chitthi shares one family space with our other family apps, such as <a href="/privacy/kissa.html">Kissa</a> and <a href="/privacy/amaanat.html">Amaanat</a>, so a family only joins once.</p>
 
         <h2>Who can see it</h2>
-        <p>Only members of your family space. A printed edition's QR codes play voice notes through private links made for that edition.</p>
+        <p>Only members of your family space. Anyone who has the family's invite link can join while it works (up to 30 days), so share it only with family. The person who started the family can remove members.</p>
+        <p>A printed edition has a QR code next to each voice note. It opens a public link made for that page: anyone who scans it (or is sent the link) can hear the voice note and see that page's photo, caption, whose news it is (for example a child's first name) and your family's name. The link keeps working until that item is taken out of the Chitthi. Think about this before you print a page about a child or give the paper to anyone outside the family.</p>
 
         <h2>Children's news</h2>
-        <p>Chitthi is made for adults. A parent or guardian decides what to share about their own child and posts it themselves. Please share only what you are comfortable keeping within your family. Any member can report an item, and a parent can delete their posts at any time.</p>
+        <p>Chitthi is made for adults and is not directed to children. A parent or guardian decides what to share about their own child (a photo, a drawing, a voice note, a first name) and posts it themselves to their own family's space. Please share only what you are comfortable keeping within your family. Any member can report an item, and a parent can take out their posts at any time.</p>
+        <p>A grandchild can join the family space only through an invite link from the family, and joins with a first name, like anyone else. A parent or guardian should decide whether a child under 13 joins, and stay involved. We don't knowingly collect information directly from a child under 13 without a parent's involvement; if you think we have, email us and we will delete it.</p>
 
         <h2>Where it is stored</h2>
-        <p>On Cloudflare (database D1 and file storage R2), over encrypted connections (HTTPS). Your internet address is used for a moment to stop abuse and is not stored with your posts.</p>
+        <p>On Cloudflare (database D1 and file storage R2), encrypted on the way (HTTPS) and where it is stored. It is not end-to-end encrypted: our server can read it, because it has to sort and play it for your family. Your internet address is used for a moment to stop abuse (rate limiting) and is not stored with your posts. Cloudflare keeps short technical logs of requests (such as the internet address and the address of the page or file asked for) for a few days, and our database keeps automatic restore points for up to 30 days, so something you delete is gone from those too within 30 days.</p>
 
         <h2>Permissions</h2>
         <ul>
             <li><strong>Microphone:</strong> only while you record a voice note or reply, after you tap to record.</li>
-            <li><strong>Photos:</strong> chosen through Android's own photo picker, so Chitthi sees only the photos you pick.</li>
+            <li><strong>Photos:</strong> chosen through Android's own photo picker or taken with your camera app, so Chitthi sees only the photo you pick or take; it asks for no storage or camera permission. Photos are made smaller on your phone before they are sent, which also drops details hidden in the photo file, such as where it was taken.</li>
             <li><strong>Notifications</strong> (optional): to tell you when your Chitthi has arrived.</li>
         </ul>
 
@@ -79,22 +92,28 @@
         </ul>
         <p>Lost your phone? Use <a href="https://chitthi.helpivy.com/delete">chitthi.helpivy.com/delete</a> or email us.</p>
 
+        <h2>Reporting</h2>
+        <p>Every page and reply has a Report option. Reports go to your family's organiser, and you can also email us.</p>
+
         <h2>Third parties</h2>
-        <p>No advertising, analytics or social SDKs. We share nothing with anyone except Cloudflare, which runs our storage.</p>
+        <p>No advertising, analytics or social SDKs, and no third-party trackers. We share nothing with anyone except Cloudflare, which runs our storage.</p>
 
-                        <h2>Reading aloud</h2>
-        <p>"Read this screen to me" plays recordings that come with the app. Names and words your family typed are spoken by your phone's own voice, on your phone. Nothing is sent anywhere to be read aloud.</p>
+        <h2>Reading aloud</h2>
+        <p>"Read this screen to me" plays recordings that come with the app. Names and words your family typed are spoken by a computer voice. In the Android app that is your phone's own text-to-speech, on your phone. On the website it is your browser's voice: some browsers (for example Chrome on a computer) use an online voice from their maker, such as Google, which then receives those words to speak them. We send nothing anywhere to be read aloud.</p>
 
-                <h2>One family across our apps on your phone</h2>
+        <h2>Telling the family on WhatsApp</h2>
+        <p>The app may offer to share a link with your family group, for example to remind everyone to add their news. It only does this if you tap Share, and you can turn the offer off in Settings. The link opens Chitthi; it carries none of your family's posts.</p>
+
+        <h2>One family across our apps on your phone</h2>
         <p>If you use more than one of our family apps on the same Android phone, they share your family sign-in (a random device key, your family, your language) with each other, so you don't have to join again in each one. Android only lets apps signed by us read it. Other apps can't. The websites don't share it.</p>
 
         <h2>Learning what helps</h2>
-        <p>To learn whether the app is helping, our server counts a few things each day, per app: for example how many stories were recorded or games finished. Each count is only a number. No name, family, phone or internet address is stored with it.</p>
-        <p>In Settings you can answer "Is this helping?". We keep your answer with the app's name, its language and the day, plus only what you choose to add (words, a short voice note, or an email if you'd like a reply). It isn't linked to your name or family.</p>
+        <p>To learn whether the app is helping, our server counts a few things each day, per app: for example how many stories were recorded or games finished. This is our own count, not an analytics company. Each count is only a number: no name, family, phone or internet address is stored with it.</p>
+        <p>In Settings you can answer "Is this helping?". We keep your answer with the app's name, its language and the day, plus only what you choose to add (words, a short voice note, or an email address or phone number if you'd like a reply). It isn't linked to your name or family.</p>
         <p>To stop abuse, we keep a scrambled (keyed hash) form of your internet address together with the day for one day only, then delete it.</p>
 
         <h2>Family home, new phones</h2>
-        <p>So the family home can show a dot when something new is waiting, our server remembers when each member last opened each of our family apps. This is deleted when they leave or the family is deleted.</p>
+        <p>So the family home can show a dot when something new is waiting, our server remembers when each member last opened each of our family apps. It also keeps each member's language and time zone, and, if the family says so, who is one of the family's elders and who is a parent or a grandchild, so each app speaks the right language and shows the right things. This is deleted when they leave or the family is deleted.</p>
         <p>A family member can make a link to set up a grandparent's phone, or to move them to a new phone. Each link works once and expires. Every family member can see who made it, for whom and when. Moving to a new phone signs out the old one. Sealed letters written before the move stay sealed for 14 days.</p>
 
         <h2>Changes</h2>

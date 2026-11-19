@@ -33,18 +33,28 @@
 <main class="max-w-3xl mx-auto px-4 pt-8">
     <header class="text-center mb-8">
         <h1 class="text-3xl sm:text-4xl font-semibold text-gray-800 mt-4">Amaanat — Privacy Policy</h1>
-        <p class="text-gray-500 mt-2">Android app <code>com.helpivy.amaanat</code> and <a href="https://amaanat.helpivy.com">amaanat.helpivy.com</a> · Effective 9 November 2026</p>
+        <p class="text-gray-500 mt-2">Android app <code>com.helpivy.amaanat</code> and <a href="https://amaanat.helpivy.com">amaanat.helpivy.com</a> · Effective 19 November 2026</p>
     </header>
     <article class="doc bg-white/80 rounded-3xl shadow-lg p-6 sm:p-10">
         <div class="summary-box">
             <p class="!text-gray-800 font-semibold !mt-0">The short version</p>
             <ul>
                 <li>Amaanat keeps voice letters that a grandparent records for someone in the family, sealed until the day or moment they choose.</li>
-                <li>A sealed letter can be heard only by the person who recorded it, until it opens for the person it is for. Not by parents, not by the family organiser, and not by us.</li>
-                <li>No email, phone number or password. No ads, no analytics, no trackers. We never copy or imitate anyone's voice.</li>
+                <li>Until a letter opens, our server gives its recording, photo and note only to the person who recorded it: not to parents, not to the family organiser, not to anyone else in the family.</li>
+                <li>No email, phone number or password. No ads, no analytics companies, no trackers. We never copy or imitate anyone's voice.</li>
                 <li>Save any opened letter to your phone for free. Delete everything any time.</li>
             </ul>
         </div>
+
+        <h2>Data at a glance</h2>
+        <table>
+            <tr><th>What</th><th>Where it lives</th><th>How long</th></tr>
+            <tr><td>Letters (voice, optional photo and note), who each is for and when it opens</td><td>Your family's private space on our server (Cloudflare); until it opens, served only to its author</td><td>Until taken back, removed after opening, or the family's data is deleted (possibly many years)</td></tr>
+            <tr><td>People letters are for: name, and optional birthday and wedding day</td><td>Your family's private space on our server (Cloudflare)</td><td>Until removed, or the family is deleted</td></tr>
+            <tr><td>Thank-yous after a letter opens</td><td>Your family's private space on our server (Cloudflare); only the reader and the author</td><td>Until deleted with the letter or the family</td></tr>
+            <tr><td>A random device key</td><td>On your phone; our server keeps only a scrambled (hashed) copy</td><td>Until that phone is signed out; then a scrambled trace for up to 180 days, so the phone can be told why</td></tr>
+            <tr><td>Daily counts (numbers only) and any "Is this helping?" answer</td><td>Our server, not linked to your name or family</td><td>Counts as totals; ask us to delete an answer</td></tr>
+        </table>
 
         <h2>What we keep, and why</h2>
         <ul>
@@ -57,16 +67,17 @@
 
         <h2>How the seal works</h2>
         <p>Our server will not give out a sealed letter's recording, photo or note to anyone except its author until the letter opens. Dated letters open on that date. "Open when…" letters open when their person chooses. Changes that could open a letter sooner, like setting a wedding date or handing a child's letters to them, need the grandparent's okay or a notice period they can undo.</p>
-        <p>Sealed letters are not sent for speech-to-text.</p>
+        <p>Sealed letters are not sent for speech-to-text, and are never in a public link.</p>
+        <p>The seal is kept by our server, not by encryption on your phone. Letters are stored like the rest of your family's content (see below), so they are not hidden from the service itself. Neither the app nor the website gives anyone else a way to hear or see a letter before it opens.</p>
 
         <h2>Where it is stored</h2>
-        <p>On Cloudflare (database D1 and file storage R2), over encrypted connections (HTTPS). Your internet address is used for a moment to stop abuse and is not stored with your letters.</p>
+        <p>On Cloudflare (database D1 and file storage R2), encrypted on the way (HTTPS) and where it is stored. It is not end-to-end encrypted: our server can read it, because it has to sort and play it for your family. Your internet address is used for a moment to stop abuse (rate limiting) and is not stored with your letters. Cloudflare keeps short technical logs of requests (such as the internet address and the address of the page or file asked for) for a few days, and our database keeps automatic restore points for up to 30 days, so something you delete is gone from those too within 30 days.</p>
 
         <h2>Permissions</h2>
         <ul>
             <li><strong>Microphone:</strong> only while you record a letter or a thank-you, after you tap to record.</li>
-            <li><strong>Photos:</strong> chosen through Android's own photo picker, so Amaanat sees only the photo you pick.</li>
-            <li><strong>Notifications</strong> (optional): to tell you on the day a letter opens.</li>
+            <li><strong>Photos:</strong> chosen through Android's own photo picker or taken with your camera app, so Amaanat sees only the photo you pick or take; it asks for no storage or camera permission. Photos are made smaller on your phone before they are sent, which also drops details hidden in the photo file, such as where it was taken.</li>
+            <li><strong>Notifications</strong> (optional): to tell you on the day a letter opens. Gentle in-app reminders (for example a birthday coming up) are shown at most twice; our server remembers which ones you have seen.</li>
         </ul>
 
         <h2>Deleting</h2>
@@ -81,24 +92,24 @@
         <p>Every opened letter and thank-you has a Report option. You can also email us.</p>
 
         <h2>Children</h2>
-        <p>Amaanat is made for adults and their families. Letters for a young child are kept by a parent until the child joins. Children don't have accounts.</p>
+        <p>Amaanat is made for adults and their families, and is not directed to children. A parent can add a young child as someone letters are for (their name, and if the parent adds them, their birthday and wedding day), and keeps those letters until the child joins the family space through an invite from the family. A parent or guardian should decide when a child under 13 joins, and stay involved. We don't knowingly collect information directly from a child under 13 without a parent's involvement; if you think we have, email us and we will delete it.</p>
 
         <h2>Third parties</h2>
-        <p>No advertising, analytics or social SDKs. We share nothing with anyone except Cloudflare, which runs our storage.</p>
+        <p>No advertising, analytics or social SDKs, and no third-party trackers. We share nothing with anyone except Cloudflare, which runs our storage.</p>
 
-                        <h2>Reading aloud</h2>
-        <p>"Read this screen to me" plays recordings that come with the app. Names and words your family typed are spoken by your phone's own voice, on your phone. Nothing is sent anywhere to be read aloud.</p>
+        <h2>Reading aloud</h2>
+        <p>"Read this screen to me" plays recordings that come with the app. Names and words your family typed are spoken by a computer voice. In the Android app that is your phone's own text-to-speech, on your phone. On the website it is your browser's voice: some browsers (for example Chrome on a computer) use an online voice from their maker, such as Google, which then receives those words to speak them. We send nothing anywhere to be read aloud.</p>
 
-                <h2>One family across our apps on your phone</h2>
+        <h2>One family across our apps on your phone</h2>
         <p>If you use more than one of our family apps on the same Android phone, they share your family sign-in (a random device key, your family, your language) with each other, so you don't have to join again in each one. Android only lets apps signed by us read it. Other apps can't. The websites don't share it.</p>
 
         <h2>Learning what helps</h2>
-        <p>To learn whether the app is helping, our server counts a few things each day, per app: for example how many stories were recorded or games finished. Each count is only a number. No name, family, phone or internet address is stored with it.</p>
-        <p>In Settings you can answer "Is this helping?". We keep your answer with the app's name, its language and the day, plus only what you choose to add (words, a short voice note, or an email if you'd like a reply). It isn't linked to your name or family.</p>
+        <p>To learn whether the app is helping, our server counts a few things each day, per app: for example how many stories were recorded or games finished. This is our own count, not an analytics company. Each count is only a number: no name, family, phone or internet address is stored with it.</p>
+        <p>In Settings you can answer "Is this helping?". We keep your answer with the app's name, its language and the day, plus only what you choose to add (words, a short voice note, or an email address or phone number if you'd like a reply). It isn't linked to your name or family.</p>
         <p>To stop abuse, we keep a scrambled (keyed hash) form of your internet address together with the day for one day only, then delete it.</p>
 
         <h2>Family home, new phones</h2>
-        <p>So the family home can show a dot when something new is waiting, our server remembers when each member last opened each of our family apps. This is deleted when they leave or the family is deleted.</p>
+        <p>So the family home can show a dot when something new is waiting, our server remembers when each member last opened each of our family apps. It also keeps each member's language and time zone, and, if the family says so, who is one of the family's elders and who is a parent or a grandchild, so each app speaks the right language and shows the right things. This is deleted when they leave or the family is deleted.</p>
         <p>A family member can make a link to set up a grandparent's phone, or to move them to a new phone. Each link works once and expires. Every family member can see who made it, for whom and when. Moving to a new phone signs out the old one. Sealed letters written before the move stay sealed for 14 days.</p>
 
         <h2>Changes</h2>
